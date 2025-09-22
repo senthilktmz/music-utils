@@ -44,8 +44,16 @@ def main():
     if RUN_DEMUCS:
         check_cmd("demucs")
 
-    # Ensure output directory
-    os.makedirs(output_dir, exist_ok=True)
+    # Ensure output directory (with error handling)
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"[INFO] Output directory ready: {output_dir}")
+    except PermissionError:
+        print(f"[ERROR] Cannot create directory {output_dir}. Permission denied.")
+        sys.exit(1)
+    except OSError as e:
+        print(f"[ERROR] Failed to create directory {output_dir}: {e}")
+        sys.exit(1)
 
     # 1) Download with yt-dlp
     # Use title + id to avoid collisions; yt-dlp picks best format automatically.
