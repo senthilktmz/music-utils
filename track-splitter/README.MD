@@ -20,6 +20,14 @@ sudo apt-get install ffmpeg -y  # Ubuntu/Debian
 
 ### Run the script
 
+#### copy the script locally
+```bash
+# track-splitter.py is from https://github.com/senthilktmz/music-utils/blob/main/track-splitter/track-splitter.py
+cp track-splitter.py /usr/local/bin/track-splitter.py
+sudo ln -snf /usr/local/bin/track-splitter.py /usr/local/bin/track-splitter
+```
+
+### Run the script 
 ```bash
 track-splitter <output_dir> <youtube_url> <basename>
 ```
@@ -31,7 +39,8 @@ track-splitter <output_dir> <youtube_url> <basename>
 Example:
 
 ```bash
-python track-splitter.py $PWD 'https://www.youtube.com/watch?v=Zi_XLOJCo_Y' billie-jean
+mkdir -p /Users/camel/billie-jean
+python track-splitter.py /Users/camel/billie-jean 'https://www.youtube.com/watch?v=Zi_XLOJCo_Y' billie-jean
 ```
 
 This will download the video into your current directory, convert it into billie-jean.wav, and run Demucs on the .wav file.
