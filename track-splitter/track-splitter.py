@@ -90,11 +90,20 @@ def main():
         print("[ERROR] ffmpeg conversion failed.")
         sys.exit(1)
 
-    # 4) Run demucs (optional)
+    # 4) Run demucs (optional) with output inside the chosen output_dir
     if RUN_DEMUCS:
+        demucs_out_dir = os.path.join(output_dir, "separated")
+        try:
+            os.makedirs(demucs_out_dir, exist_ok=True)
+        except Exception:
+            # not fatal; demucs will try to create it, but we attempt for better errors
+            pass
+
         print(f"[INFO] Running demucs on {wav_file} ...")
         try:
-            subprocess.run(["demucs", wav_file], check=True)
+            # -o/--out controls the destination directory for separated stems
+            subprocess.run(["demucs", "-o", demucs_out_dir, wav_file], check=True)
+            print(f"[INFO] Demucs output in: {demucs_out_dir}")
         except subprocess.CalledProcessError:
             print("[ERROR] demucs failed.")
             sys.exit(1)
