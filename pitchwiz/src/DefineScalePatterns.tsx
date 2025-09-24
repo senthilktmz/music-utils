@@ -3,7 +3,7 @@ export const SCALES_PATTERNS = [
   {
     name: "Major",
     pattern: [
-      { label: "1", color: "lightgreen", type: "scale_interval_member" },
+      { label: "1", color: "lightgreen", type: "scale_interval_member", fontColor: "darkgreen" },
       { label: "", color: "white", type: "scale_interval_blank" },
       { label: "2", color: "lightblue", type: "scale_interval" },
       { label: "", color: "white", type: "scale_interval_blank" },

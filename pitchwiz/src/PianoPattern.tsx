@@ -2,6 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 
 export interface PatternRect {
   label?: string;
+  fontColor?: string;
+  fontType?: string;
   color: string;
   type?: string;
 }
@@ -82,7 +84,8 @@ const PianoPattern: React.FC<PianoPatternProps> = ({
                 y={keyHeight / 2 + 6}
                 textAnchor="middle"
                 fontSize={16}
-                fill={rect.color === "black" ? "#fff" : "#222"}
+                fill={rect.fontColor || (rect.color === "black" ? "#fff" : "#222")}
+                fontWeight={rect.fontType === "bold" ? "bold" : "normal"}
                 style={{ userSelect: "none" }}
               >
                 {rect.label}

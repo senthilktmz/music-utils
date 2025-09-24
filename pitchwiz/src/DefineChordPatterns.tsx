@@ -25,7 +25,7 @@ export const CHORDS_PATTERNS = [
   {
     name: "Major",
     pattern: [
-      { label: "1", color: "lightblue", type: "scale_interval_member" }, //
+      { label: "1", color: "white", type: "scale_interval_member", fontColor: "darkgreen", fontType: "bold"  }, //
       { label: "", color: "white", type: "scale_interval_blank" },  // b2
       { label: "", color: "white", type: "scale_interval" },  // 2
       { label: "", color: "white", type: "scale_interval_blank" },  // b3
