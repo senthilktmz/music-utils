@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
-import { CHORDS_PATTERNS } from "./DefineChordPatterns";
+import { CHORDS_PATTERNS } from "./patterns/Chords";
 
 const ChordsPattern: React.FC = () => {
   const [selectedPattern, setSelectedPattern] = useState<string>(CHORDS_PATTERNS[0].name);

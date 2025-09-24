@@ -1,6 +1,6 @@
 import React from "react";
 import PianoPattern from "./PianoPattern";
-import { MAIN_KEYBOARD_PATTERN } from "./DefineMainKeyboardPattern";
+import { MAIN_KEYBOARD_PATTERN } from "./patterns/MainKeyboard";
 
 interface PianoKeyboardProps {
   octaves?: number;

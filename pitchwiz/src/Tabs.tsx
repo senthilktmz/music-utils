@@ -3,7 +3,7 @@ import PianoKeyboard from "./PianoKeyboard";
 import IntervalPattern from "./IntervalPattern";
 import ScalesPattern from "./ScalesPattern";
 import ChordsPattern from "./ChordsPattern";
-import { SCALES_PATTERNS } from "./DefineScalePatterns";
+import { SCALES_PATTERNS } from "./patterns/Scales";
 
 const Tabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState("intervals");

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
-import { SCALES_PATTERNS } from "./DefineScalePatterns";
-import { MAIN_KEYBOARD_PATTERN } from "./DefineMainKeyboardPattern";
+import { SCALES_PATTERNS } from "./patterns/Scales";
+import { MAIN_KEYBOARD_PATTERN } from "./patterns/MainKeyboard";
 
 const ScalesPattern: React.FC = () => {
   const [selectedPattern, setSelectedPattern] = useState<string>(SCALES_PATTERNS[0].name);
