@@ -106,6 +106,9 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
       {currentPattern && (
         <>
           <div style={{ height: 32 }} />
+          <div style={{ textAlign: 'center', marginBottom: 8, color: '#555' }}>
+            Tip: Drag or slide the pattern bar below to left or right to explore different scale positions.
+          </div>
           <IntervalPattern
             pattern={currentPattern.pattern}
             keyWidth={KEY_WIDTH}
