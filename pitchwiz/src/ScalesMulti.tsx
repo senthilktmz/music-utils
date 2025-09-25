@@ -23,8 +23,9 @@ const ScalesMulti: React.FC = () => {
     const handleResize = () => {
       const windowWidth = window.innerWidth - 2 * HORIZONTAL_MARGIN - 24;
       const max = Math.floor((windowWidth / (KEY_WIDTH * KEYBOARD_LENGTH)) * 100);
-      setMaxZoom(Math.max(30, Math.min(120, max)));
-      setZoom(z => Math.min(z, Math.max(30, Math.min(120, max))));
+      const clampedMax = Math.max(30, Math.min(120, max));
+      setMaxZoom(clampedMax);
+      setZoom(clampedMax); // Set zoom to maxZoom by default
     };
     handleResize();
     window.addEventListener('resize', handleResize);

@@ -70,14 +70,25 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
     <div>
       {/* Root key selector row */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 8, margin: '16px 0' }}>
-        <select
-          value={selectedPattern}
-          onChange={e => setSelectedPattern(e.target.value)}
-        >
-          {SCALES_PATTERNS.map((p: any) => (
-            <option key={p.name} value={p.name}>{p.name}</option>
-          ))}
-        </select>
+        {ROOT_NOTES.map((note, idx) => (
+          <button
+            key={note}
+            style={{
+              padding: '6px 16px',
+              background: rootIndex === idx ? '#1976d2' : '#f0f0f0',
+              color: rootIndex === idx ? '#fff' : '#222',
+              border: '1px solid #aaa',
+              borderRadius: 4,
+              fontWeight: rootIndex === idx ? 'bold' : 'normal',
+              fontSize: 16,
+              cursor: 'pointer',
+              minWidth: 32
+            }}
+            onClick={() => handleRootButtonClick(idx)}
+          >
+            {note}
+          </button>
+        ))}
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 32, justifyContent: 'center', marginBottom: 32 }}>
         <div style={{ flex: 1, maxWidth: 340 }}>
