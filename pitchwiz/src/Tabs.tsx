@@ -6,14 +6,18 @@ import ChordsPattern from "./ChordsPattern";
 import Intervals from "./Intervals";
 import { SCALES_PATTERNS } from "./patterns/Scales";
 
-const Tabs: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("intervals");
+interface TabsProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
+
+const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
   const [scalesPatternCount, setScalesPatternCount] = useState(1);
   const [chordsPatternCount, setChordsPatternCount] = useState(1);
 
   return (
     <div>
-      <div style={{ display: "flex", borderBottom: "2px solid #ccc", marginBottom: 16 }}>
+      <div style={{ display: "flex", alignItems: "center", height: '56px' }}>
         <button
           style={{
             padding: "10px 24px",
@@ -54,7 +58,7 @@ const Tabs: React.FC = () => {
           Chords
         </button>
       </div>
-      <div>
+      <div style={{ flex: 1 }}>
         {activeTab === "intervals" && (
           <div>
             <Intervals />
