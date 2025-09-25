@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
 import MiniKeyboard from "./MiniKeyboard";
@@ -64,7 +64,52 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
   const [rootIndex, setRootIndex] = useState(0); // index in ROOT_NOTES
   const [sliderOffsetX, setSliderOffsetX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const oscillatorsRef = useRef<OscillatorNode[]>([]);
+
   const currentPattern = CHORDS_PATTERNS.find((p) => p.name === selectedPattern);
+
+  // Helper: Map note names to frequencies for the 4th octave (C4 = 261.63 Hz)
+  const noteToFrequency = (note: string) => {
+    const NOTE_FREQS: { [note: string]: number } = {
+      'C': 261.63, 'C#': 277.18, 'D': 293.66, 'D#': 311.13, 'E': 329.63, 'F': 349.23,
+      'F#': 369.99, 'G': 392.00, 'G#': 415.30, 'A': 440.00, 'A#': 466.16, 'B': 493.88,
+    };
+    return NOTE_FREQS[note] || 261.63;
+  };
+
+  const playChord = () => {
+    if (isPlaying) return;
+    const notes = getPatternNotes();
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    audioContextRef.current = ctx;
+    const oscillators: OscillatorNode[] = notes.map(note => {
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.value = noteToFrequency(note);
+      osc.connect(ctx.destination);
+      return osc;
+    });
+    oscillators.forEach(osc => osc.start());
+    oscillatorsRef.current = oscillators;
+    setIsPlaying(true);
+    setTimeout(() => {
+      stopChord();
+    }, 1000);
+  };
+
+  const stopChord = () => {
+    if (audioContextRef.current) {
+      oscillatorsRef.current.forEach(osc => {
+        try { osc.stop(); } catch (e) {}
+      });
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    oscillatorsRef.current = [];
+    setIsPlaying(false);
+  };
 
   // Find the first occurrence of the root note in MAIN_KEYBOARD_PATTERN
   const alignSliderToRoot = (rootIdx: number) => {
@@ -106,51 +151,62 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
 
   return (
     <div>
-      {/* Root key selector row */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, margin: '16px 0' }}>
-        {ROOT_NOTES.map((note, idx) => (
-          <button
-            key={note}
-            style={{
-              padding: '6px 16px',
-              background: rootIndex === idx ? '#1976d2' : '#f0f0f0',
-              color: rootIndex === idx ? '#fff' : '#222',
-              border: '1px solid #aaa',
-              borderRadius: 4,
-              fontWeight: rootIndex === idx ? 'bold' : 'normal',
-              fontSize: 16,
-              cursor: 'pointer',
-              minWidth: 32
-            }}
-            onClick={() => handleRootButtonClick(idx)}
-          >
-            {note}
-          </button>
-        ))}
-      </div>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 32, justifyContent: 'center', marginBottom: 32 }}>
-        <div style={{ flex: 1, maxWidth: 340 }}>
-          <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-            <label htmlFor="pattern-select" style={{ marginRight: 8, fontWeight: 'bold' }}>Select Chord Pattern:</label>
-            <select
-              id="pattern-select"
-              value={selectedPattern}
-              onChange={(e) => setSelectedPattern(e.target.value)}
-              style={{ fontSize: 16, padding: '4px 8px' }}
+      {/* Root key selector row and chord selection dropdown on same line */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 16, margin: '16px 0', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {ROOT_NOTES.map((note, idx) => (
+            <button
+              key={note}
+              style={{
+                padding: '6px 16px',
+                background: rootIndex === idx ? '#1976d2' : '#f0f0f0',
+                color: rootIndex === idx ? '#fff' : '#222',
+                border: '1px solid #aaa',
+                borderRadius: 4,
+                fontWeight: rootIndex === idx ? 'bold' : 'normal',
+                fontSize: 16,
+                cursor: 'pointer',
+                minWidth: 32
+              }}
+              onClick={() => handleRootButtonClick(idx)}
             >
-              {CHORDS_PATTERNS.map((p) => (
-                <option key={p.name} value={p.name}>{p.name}</option>
-              ))}
-            </select>
-          </div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 18 }}>
+              {note}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <label htmlFor="pattern-select" style={{ fontWeight: 'bold' }}>Chord:</label>
+          <select
+            id="pattern-select"
+            value={selectedPattern}
+            onChange={(e) => setSelectedPattern(e.target.value)}
+            style={{ fontSize: 16, padding: '4px 8px' }}
+          >
+            {CHORDS_PATTERNS.map((p) => (
+              <option key={p.name} value={p.name}>{p.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {/* Root key, Notes, MiniKeyboard, and Play/Stop buttons on same line */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, marginBottom: 32, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, minWidth: 160 }}>
+          <div style={{ fontWeight: 'bold', fontSize: 18 }}>
             Root key: {ROOT_NOTES[rootIndex]}
           </div>
-          <div style={{ textAlign: 'center', margin: '8px 0', fontSize: 16 }}>
+          <div style={{ margin: '8px 0', fontSize: 16 }}>
             Notes: {getPatternNotes().join(' - ')}
           </div>
         </div>
         <MiniKeyboard notes={getPatternNotes()} root={ROOT_NOTES[rootIndex]} width={MINI_KEY_WIDTH} height={MINI_KEY_HEIGHT} />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 16 }}>
+          <button onClick={playChord} disabled={isPlaying} style={{ marginBottom: 8, padding: '8px 24px', fontSize: 16, background: isPlaying ? '#bbb' : '#1976d2', color: '#fff', border: 'none', borderRadius: 4, cursor: isPlaying ? 'not-allowed' : 'pointer' }}>
+            ▶ Play
+          </button>
+          <button onClick={stopChord} disabled={!isPlaying} style={{ padding: '8px 24px', fontSize: 16, background: !isPlaying ? '#bbb' : '#d32f2f', color: '#fff', border: 'none', borderRadius: 4, cursor: !isPlaying ? 'not-allowed' : 'pointer' }}>
+            ■ Stop
+          </button>
+        </div>
       </div>
       {currentPattern && (
         <>
