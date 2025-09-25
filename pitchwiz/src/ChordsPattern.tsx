@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
 import MiniKeyboard from "./MiniKeyboard";
-import { CHORDS_PATTERNS } from "./patterns/Chords";
+import { CHORDS_PATTERNS_ARRAY } from "./patterns/Chords";
 import { MAIN_KEYBOARD_PATTERN } from "./patterns/MainKeyboard";
 
 const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -10,6 +10,48 @@ const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", 
 interface ChordsPatternProps {
   zoom?: number;
 }
+
+// Define the full chromatic interval sequence (1 octave)
+const INTERVAL_SEQUENCE = [
+  "1",  // 0
+  "b2", // 1
+  "2",  // 2
+  "b3", // 3
+  "3",  // 4
+  "4",  // 5
+  "b5", // 6
+  "5",  // 7
+  "b6", // 8
+  "6",  // 9
+  "b7", // 10
+  "7"   // 11
+];
+
+// Generate chord patterns at runtime
+function generateChordPattern([name, ...intervals]: string[]) {
+  // Find the highest interval index in the canonical sequence
+  const maxIndex = Math.max(...intervals.map(i => INTERVAL_SEQUENCE.indexOf(i)));
+  return {
+    name,
+    pattern: INTERVAL_SEQUENCE.slice(0, maxIndex + 1).map((interval, idx) => {
+      if (intervals.includes(interval)) {
+        if (interval === "1") {
+          return {
+            label: "↓ 1",
+            color: "lightblue",
+            type: "scale_interval_member",
+            fontColor: "darkgreen",
+            fontType: "bold"
+          };
+        }
+        return { label: interval, color: "lightblue", type: "scale_interval" };
+      }
+      return { label: "", color: "white", type: "scale_interval_blank" };
+    })
+  };
+}
+
+const CHORDS_PATTERNS = CHORDS_PATTERNS_ARRAY.map(generateChordPattern);
 
 const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
   const KEY_WIDTH = 40 * (zoom / 100);
@@ -52,9 +94,9 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
     if (!currentPattern) return [];
     return currentPattern.pattern
       .map((rect, i) => rect.type !== 'scale_interval_blank' ? i : null)
-      .filter(i => i !== null)
+      .filter((i): i is number => i !== null)
       .map((i) => {
-        const idx = (rootIndex + (i as number)) % 12;
+        const idx = (rootIndex + i) % 12;
         return ROOT_NOTES[idx];
       });
   };
