@@ -8,8 +8,8 @@ interface PianoKeyboardProps {
   keyHeight?: number;
 }
 
-const PianoKeyboard: React.FC = () => {
-  return <PianoPattern pattern={MAIN_KEYBOARD_PATTERN} keyWidth={40} keyHeight={120} slidable={false} />;
+const PianoKeyboard: React.FC<PianoKeyboardProps> = ({ keyWidth = 40, keyHeight = 120 }) => {
+  return <PianoPattern pattern={MAIN_KEYBOARD_PATTERN} keyWidth={keyWidth} keyHeight={keyHeight} slidable={false} />;
 };
 
 export default PianoKeyboard;

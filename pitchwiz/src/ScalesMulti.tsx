@@ -8,6 +8,7 @@ const ScalesMulti: React.FC = () => {
   const [instances, setInstances] = useState<number[]>([0]);
   const [nextId, setNextId] = useState(1);
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [zoom, setZoom] = useState(60); // percent
 
   const handleAdd = () => {
     setInstances((prev) => [...prev, nextId]);
@@ -18,6 +19,19 @@ const ScalesMulti: React.FC = () => {
 
   return (
     <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+        <label style={{ fontWeight: 'bold' }}>Zoom:</label>
+        <input
+          type="range"
+          min={30}
+          max={120}
+          step={5}
+          value={zoom}
+          onChange={e => setZoom(Number(e.target.value))}
+          style={{ width: 120 }}
+        />
+        <span>{zoom}%</span>
+      </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
         {instances.map((id, idx) => (
           <div
@@ -33,7 +47,7 @@ const ScalesMulti: React.FC = () => {
             }}
             onClick={() => handleSelect(idx)}
           >
-            <ScalesPattern />
+            <ScalesPattern zoom={zoom} />
           </div>
         ))}
       </div>

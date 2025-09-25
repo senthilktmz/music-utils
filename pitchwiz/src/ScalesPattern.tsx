@@ -5,11 +5,20 @@ import MiniKeyboard from "./MiniKeyboard";
 import { SCALES_PATTERNS } from "./patterns/Scales";
 import { MAIN_KEYBOARD_PATTERN } from "./patterns/MainKeyboard";
 
-const KEY_WIDTH = 40;
-const KEYBOARD_LENGTH = MAIN_KEYBOARD_PATTERN.length;
 const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
-const ScalesPattern: React.FC = () => {
+interface ScalesPatternProps {
+  zoom?: number;
+}
+
+const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
+  // Scale key widths and heights by zoom percent
+  const KEY_WIDTH = 40 * (zoom / 100);
+  const KEY_HEIGHT = 40 * (zoom / 100);
+  const MINI_KEY_WIDTH = 280 * (zoom / 100);
+  const MINI_KEY_HEIGHT = 80 * (zoom / 100);
+  const KEYBOARD_LENGTH = MAIN_KEYBOARD_PATTERN.length;
+
   const [selectedPattern, setSelectedPattern] = useState<string>(SCALES_PATTERNS[0].name);
   const [rootIndex, setRootIndex] = useState(0); // index in ROOT_NOTES
   const [sliderOffsetX, setSliderOffsetX] = useState(0);
@@ -100,7 +109,7 @@ const ScalesPattern: React.FC = () => {
             Notes: {getPatternNotes().join(' - ')}
           </div>
         </div>
-        <MiniKeyboard notes={getPatternNotes()} root={ROOT_NOTES[rootIndex]} />
+        <MiniKeyboard notes={getPatternNotes()} root={ROOT_NOTES[rootIndex]} width={MINI_KEY_WIDTH} height={MINI_KEY_HEIGHT} />
       </div>
       {currentPattern && (
         <>
@@ -108,7 +117,7 @@ const ScalesPattern: React.FC = () => {
           <IntervalPattern
             pattern={currentPattern.pattern}
             keyWidth={KEY_WIDTH}
-            keyHeight={40}
+            keyHeight={KEY_HEIGHT}
             keyboardWidth={KEY_WIDTH * KEYBOARD_LENGTH}
             totalKeys={KEYBOARD_LENGTH}
             slidable={true}
@@ -118,7 +127,7 @@ const ScalesPattern: React.FC = () => {
         </>
       )}
       <div style={{ marginTop: 8 }}>
-        <PianoKeyboard />
+        <PianoKeyboard keyWidth={KEY_WIDTH} keyHeight={KEY_HEIGHT * 3} />
       </div>
     </div>
   );
