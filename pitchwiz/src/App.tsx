@@ -10,12 +10,12 @@ import Intervals from "./Intervals";
 import { SCALES_PATTERNS } from "./patterns/Scales";
 
 function App() {
-  const [activeTab, setActiveTab] = useState("intervals");
+  const [activeTab, setActiveTab] = useState("chords");
 
   let content;
-  if (activeTab === "intervals") content = <Intervals />;
+  if (activeTab === "chords") content = <ChordsMulti />;
   else if (activeTab === "scales") content = <ScalesMulti />;
-  else if (activeTab === "chords") content = <ChordsMulti />;
+  else if (activeTab === "intervals") content = <Intervals />;
 
   return (
     <div className="App">

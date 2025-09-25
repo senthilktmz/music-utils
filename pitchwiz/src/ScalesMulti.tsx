@@ -77,15 +77,17 @@ const ScalesMulti: React.FC = () => {
               onClick={e => { e.stopPropagation(); handleRemove(instance.id); }}
               style={{
                 position: 'absolute', top: 8, right: 8, zIndex: 2,
-                background: 'none', border: 'none', cursor: 'pointer',
-                padding: 4, borderRadius: '50%',
-                transition: 'background 0.2s',
-                outline: 'none',
+                background: '#e53935', color: 'white', border: 'none',
+                borderRadius: '50%', width: 22, height: 22,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 14, cursor: 'pointer',
+                boxShadow: '0 2px 8px #0002',
+                padding: 0
               }}
               aria-label="Remove instance"
               tabIndex={0}
             >
-              <TrashIcon />
+              <span style={{ fontSize: 16, fontWeight: "bold", lineHeight: 1 }}>&#10005;</span>
             </button>
             <ScalesPattern zoom={zoom} />
           </div>

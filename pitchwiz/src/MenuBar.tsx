@@ -33,45 +33,47 @@ const MenuBar: React.FC<MenuBarProps> = ({ activeTab, setActiveTab }) => (
       }}
     />
     <div style={{ display: "flex", alignItems: "center", height: "56px" }}>
-      <button
-        style={{
-          padding: "10px 24px",
-          border: "none",
-          borderBottom: activeTab === "intervals" ? "3px solid #007bff" : "none",
-          background: "none",
-          fontWeight: activeTab === "intervals" ? "bold" : "normal",
-          cursor: "pointer"
-        }}
-        onClick={() => setActiveTab("intervals")}
-      >
-        Intervals
-      </button>
-      <button
-        style={{
-          padding: "10px 24px",
-          border: "none",
-          borderBottom: activeTab === "scales" ? "3px solid #007bff" : "none",
-          background: "none",
-          fontWeight: activeTab === "scales" ? "bold" : "normal",
-          cursor: "pointer"
-        }}
-        onClick={() => setActiveTab("scales")}
-      >
-        Scales
-      </button>
-      <button
-        style={{
-          padding: "10px 24px",
-          border: "none",
-          borderBottom: activeTab === "chords" ? "3px solid #007bff" : "none",
-          background: "none",
-          fontWeight: activeTab === "chords" ? "bold" : "normal",
-          cursor: "pointer"
-        }}
-        onClick={() => setActiveTab("chords")}
-      >
-        Chords
-      </button>
+      <div className="menu-bar-tabs" style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+        <button
+          style={{
+            padding: "10px 24px",
+            border: "none",
+            borderBottom: activeTab === "chords" ? "3px solid #007bff" : "none",
+            background: "none",
+            fontWeight: activeTab === "chords" ? "bold" : "normal",
+            cursor: "pointer"
+          }}
+          onClick={() => setActiveTab("chords")}
+        >
+          Chords
+        </button>
+        <button
+          style={{
+            padding: "10px 24px",
+            border: "none",
+            borderBottom: activeTab === "scales" ? "3px solid #007bff" : "none",
+            background: "none",
+            fontWeight: activeTab === "scales" ? "bold" : "normal",
+            cursor: "pointer"
+          }}
+          onClick={() => setActiveTab("scales")}
+        >
+          Scales
+        </button>
+        <button
+          style={{
+            padding: "10px 24px",
+            border: "none",
+            borderBottom: activeTab === "intervals" ? "3px solid #007bff" : "none",
+            background: "none",
+            fontWeight: activeTab === "intervals" ? "bold" : "normal",
+            cursor: "pointer"
+          }}
+          onClick={() => setActiveTab("intervals")}
+        >
+          Intervals
+        </button>
+      </div>
     </div>
   </nav>
 );
