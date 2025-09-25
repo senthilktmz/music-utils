@@ -52,7 +52,8 @@ const ChordsMulti: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+      {/* Zoom selection hidden as per user request */}
+      {/* <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
         <label style={{ fontWeight: 'bold' }}>Zoom:</label>
         <input
           type="range"
@@ -64,7 +65,7 @@ const ChordsMulti: React.FC = () => {
           style={{ width: 120 }}
         />
         <span>{zoom}%</span>
-      </div>
+      </div> */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 36, marginLeft: 24, marginRight: 24 }}>
         {instances.map((instance) => (
           <div

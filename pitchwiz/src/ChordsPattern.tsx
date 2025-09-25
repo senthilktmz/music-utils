@@ -84,11 +84,17 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
     const notes = getPatternNotes();
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     audioContextRef.current = ctx;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.08); // soft attack
+    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.92); // sustain
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1); // gentle release
+    gain.connect(ctx.destination);
     const oscillators: OscillatorNode[] = notes.map(note => {
       const osc = ctx.createOscillator();
-      osc.type = 'triangle';
+      osc.type = 'sine'; // Sweetest basic waveform
       osc.frequency.value = noteToFrequency(note);
-      osc.connect(ctx.destination);
+      osc.connect(gain);
       return osc;
     });
     oscillators.forEach(osc => osc.start());
