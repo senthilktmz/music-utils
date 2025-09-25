@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChordsPattern from "./ChordsPattern";
 
 // Use highly contrasting colors
 const ROW_COLORS = ["#ffe082", "#90caf9", "#ffab91", "#a5d6a7"]; // yellow, blue, orange, green
+const KEY_WIDTH = 40;
+const KEYBOARD_LENGTH = 36;
+const HORIZONTAL_MARGIN = 24;
 
 const ChordsMulti: React.FC = () => {
   const [instances, setInstances] = useState<number[]>([0]);
   const [nextId, setNextId] = useState(1);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [zoom, setZoom] = useState(60); // percent
+  const [maxZoom, setMaxZoom] = useState(120);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const windowWidth = window.innerWidth - 2 * HORIZONTAL_MARGIN - 48;
+      const max = Math.floor((windowWidth / (KEY_WIDTH * KEYBOARD_LENGTH)) * 100);
+      setMaxZoom(Math.max(30, Math.min(120, max)));
+      setZoom(z => Math.min(z, Math.max(30, Math.min(120, max))));
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleAdd = () => {
     setInstances((prev) => [...prev, nextId]);
@@ -24,15 +40,15 @@ const ChordsMulti: React.FC = () => {
         <input
           type="range"
           min={30}
-          max={120}
-          step={5}
+          max={maxZoom}
+          step={1}
           value={zoom}
-          onChange={e => setZoom(Number(e.target.value))}
+          onChange={e => setZoom(Math.min(Number(e.target.value), maxZoom))}
           style={{ width: 120 }}
         />
         <span>{zoom}%</span>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 36, marginLeft: 24, marginRight: 24 }}>
         {instances.map((id, idx) => (
           <div
             key={id}
