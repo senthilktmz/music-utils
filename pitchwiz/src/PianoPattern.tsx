@@ -13,6 +13,7 @@ interface PianoPatternProps {
   keyWidth?: number;
   keyHeight?: number;
   slidable?: boolean;
+  onRootChange?: (rootIndex: number) => void;
 }
 
 const PianoPattern: React.FC<PianoPatternProps> = ({
@@ -20,6 +21,7 @@ const PianoPattern: React.FC<PianoPatternProps> = ({
   keyWidth = 40,
   keyHeight = 60,
   slidable = true,
+  onRootChange,
 }) => {
   const [offsetX, setOffsetX] = useState(0);
   const [dragging, setDragging] = useState(false);
@@ -29,6 +31,14 @@ const PianoPattern: React.FC<PianoPatternProps> = ({
 
   // Set the background width to match the full keyboard below (e.g. 3 octaves = 36 keys)
   const backgroundWidth = 36 * keyWidth; // 3 octaves below
+
+  // Compute which key index the first rectangle aligns with
+  useEffect(() => {
+    if (onRootChange) {
+      const rootIndex = Math.round(offsetX / keyWidth);
+      onRootChange(rootIndex);
+    }
+  }, [offsetX, keyWidth, onRootChange]);
 
   // Drag logic
   useEffect(() => {

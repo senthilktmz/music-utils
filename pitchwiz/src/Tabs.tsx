@@ -3,11 +3,13 @@ import PianoKeyboard from "./PianoKeyboard";
 import IntervalPattern from "./IntervalPattern";
 import ScalesPattern from "./ScalesPattern";
 import ChordsPattern from "./ChordsPattern";
+import Intervals from "./Intervals";
 import { SCALES_PATTERNS } from "./patterns/Scales";
 
 const Tabs: React.FC = () => {
   const [activeTab, setActiveTab] = useState("intervals");
   const [scalesPatternCount, setScalesPatternCount] = useState(1);
+  const [chordsPatternCount, setChordsPatternCount] = useState(1);
 
   return (
     <div>
@@ -22,6 +24,19 @@ const Tabs: React.FC = () => {
             cursor: "pointer",
           }}
           onClick={() => setActiveTab("intervals")}
+        >
+          Intervals
+        </button>
+        <button
+          style={{
+            padding: "10px 24px",
+            border: "none",
+            borderBottom: activeTab === "scales" ? "3px solid #007bff" : "none",
+            background: "none",
+            fontWeight: activeTab === "scales" ? "bold" : "normal",
+            cursor: "pointer",
+          }}
+          onClick={() => setActiveTab("scales")}
         >
           Scales
         </button>
@@ -41,6 +56,11 @@ const Tabs: React.FC = () => {
       </div>
       <div>
         {activeTab === "intervals" && (
+          <div>
+            <Intervals />
+          </div>
+        )}
+        {activeTab === "scales" && (
           <div>
             {[...Array(scalesPatternCount)].map((_, idx) => (
               <div key={idx} style={{ marginBottom: 32 }}>
@@ -69,8 +89,31 @@ const Tabs: React.FC = () => {
           </div>
         )}
         {activeTab === "chords" && (
-          <div style={{ padding: 16 }}>
-            <ChordsPattern />
+          <div>
+            {[...Array(chordsPatternCount)].map((_, idx) => (
+              <div key={idx} style={{ marginBottom: 32 }}>
+                <ChordsPattern />
+                <div style={{ display: "flex", justifyContent: "center", marginTop: 12 }}>
+                  <button
+                    onClick={() => setChordsPatternCount(chordsPatternCount + 1)}
+                    style={{
+                      borderRadius: "50%",
+                      width: 40,
+                      height: 40,
+                      fontSize: 24,
+                      background: "#007bff",
+                      color: "#fff",
+                      border: "none",
+                      cursor: "pointer",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+                    }}
+                    aria-label="Add Chord Pattern"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

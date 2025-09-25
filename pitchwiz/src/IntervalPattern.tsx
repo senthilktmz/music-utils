@@ -4,18 +4,19 @@ import PianoPattern from "./PianoPattern";
 const NOTE_SEQUENCE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 interface IntervalPatternProps {
-  pattern: { label: string; color: string; type: string }[];
+  pattern: { label: string; color: string; type: string; fontColor?: string }[];
   keyWidth: number;
   keyHeight: number;
   keyboardWidth: number;
   totalKeys: number;
   slidable?: boolean;
   octaves?: number;
+  onRootChange?: (rootIndex: number) => void;
 }
 
-const IntervalPattern: React.FC<IntervalPatternProps> = ({ pattern, keyWidth, keyHeight, keyboardWidth, totalKeys, slidable = true, octaves = 2 }) => {
+const IntervalPattern: React.FC<IntervalPatternProps> = ({ pattern, keyWidth, keyHeight, keyboardWidth, totalKeys, slidable = true, octaves = 2, onRootChange }) => {
   // Instead of overlaying on a keyboard, just pass the pattern directly to PianoPattern
-  return <PianoPattern pattern={pattern} keyWidth={keyWidth} keyHeight={keyHeight} slidable={slidable} />;
+  return <PianoPattern pattern={pattern} keyWidth={keyWidth} keyHeight={keyHeight} slidable={slidable} onRootChange={onRootChange} />;
 };
 
 export default IntervalPattern;
