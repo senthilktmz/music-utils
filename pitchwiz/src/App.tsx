@@ -4,8 +4,8 @@ import "./App.css";
 import MenuBar from "./MenuBar";
 import PianoKeyboard from "./PianoKeyboard";
 import IntervalPattern from "./IntervalPattern";
-import ScalesPattern from "./ScalesPattern";
-import ChordsPattern from "./ChordsPattern";
+import ScalesMulti from "./ScalesMulti";
+import ChordsMulti from "./ChordsMulti";
 import Intervals from "./Intervals";
 import { SCALES_PATTERNS } from "./patterns/Scales";
 
@@ -14,8 +14,8 @@ function App() {
 
   let content;
   if (activeTab === "intervals") content = <Intervals />;
-  else if (activeTab === "scales") content = <ScalesPattern />;
-  else if (activeTab === "chords") content = <ChordsPattern />;
+  else if (activeTab === "scales") content = <ScalesMulti />;
+  else if (activeTab === "chords") content = <ChordsMulti />;
 
   return (
     <div className="App">
