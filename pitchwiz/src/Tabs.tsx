@@ -4,7 +4,10 @@ import IntervalPattern from "./IntervalPattern";
 import ScalesPattern from "./ScalesPattern";
 import ChordsPattern from "./ChordsPattern";
 import Intervals from "./Intervals";
-import { SCALES_PATTERNS } from "./patterns/Scales";
+import { SCALES_PATTERNS_ARRAY } from "./patterns/Scales";
+import { generateScalePattern } from "./patterns/patternUtils";
+
+const SCALES_PATTERNS = SCALES_PATTERNS_ARRAY.map(generateScalePattern);
 
 interface TabsProps {
   activeTab: string;

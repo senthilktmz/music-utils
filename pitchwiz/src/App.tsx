@@ -7,7 +7,8 @@ import IntervalPattern from "./IntervalPattern";
 import ScalesMulti from "./ScalesMulti";
 import ChordsMulti from "./ChordsMulti";
 import Intervals from "./Intervals";
-import { SCALES_PATTERNS } from "./patterns/Scales";
+import { SCALES_PATTERNS_ARRAY } from "./patterns/Scales";
+import { generateScalePattern } from "./patterns/patternUtils";
 
 function App() {
   const [activeTab, setActiveTab] = useState("chords");
@@ -16,6 +17,8 @@ function App() {
   if (activeTab === "chords") content = <ChordsMulti />;
   else if (activeTab === "scales") content = <ScalesMulti />;
   else if (activeTab === "intervals") content = <Intervals />;
+
+  const SCALES_PATTERNS = SCALES_PATTERNS_ARRAY.map(generateScalePattern);
 
   return (
     <div className="App">

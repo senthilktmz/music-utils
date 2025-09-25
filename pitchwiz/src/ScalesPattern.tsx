@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
 import MiniKeyboard from "./MiniKeyboard";
-import { SCALES_PATTERNS } from "./patterns/Scales";
+import { SCALES_PATTERNS_ARRAY } from "./patterns/Scales";
+import { INTERVAL_SEQUENCE, generateScalePattern } from "./patterns/patternUtils";
 import { MAIN_KEYBOARD_PATTERN } from "./patterns/MainKeyboard";
 
 const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -10,6 +11,8 @@ const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", 
 interface ScalesPatternProps {
   zoom?: number;
 }
+
+const SCALES_PATTERNS = SCALES_PATTERNS_ARRAY.map(generateScalePattern);
 
 const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
   // Scale key widths and heights by zoom percent
@@ -23,7 +26,7 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
   const [rootIndex, setRootIndex] = useState(0); // index in ROOT_NOTES
   const [sliderOffsetX, setSliderOffsetX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const currentPattern = SCALES_PATTERNS.find((p) => p.name === selectedPattern);
+  const currentPattern = SCALES_PATTERNS.find((p: any) => p.name === selectedPattern);
 
   // Find the first occurrence of the root note in MAIN_KEYBOARD_PATTERN
   const alignSliderToRoot = (rootIdx: number) => {
@@ -67,25 +70,14 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
     <div>
       {/* Root key selector row */}
       <div style={{ display: 'flex', justifyContent: 'center', gap: 8, margin: '16px 0' }}>
-        {ROOT_NOTES.map((note, idx) => (
-          <button
-            key={note}
-            style={{
-              padding: '6px 16px',
-              background: rootIndex === idx ? '#1976d2' : '#f0f0f0',
-              color: rootIndex === idx ? '#fff' : '#222',
-              border: '1px solid #aaa',
-              borderRadius: 4,
-              fontWeight: rootIndex === idx ? 'bold' : 'normal',
-              fontSize: 16,
-              cursor: 'pointer',
-              minWidth: 32
-            }}
-            onClick={() => handleRootButtonClick(idx)}
-          >
-            {note}
-          </button>
-        ))}
+        <select
+          value={selectedPattern}
+          onChange={e => setSelectedPattern(e.target.value)}
+        >
+          {SCALES_PATTERNS.map((p: any) => (
+            <option key={p.name} value={p.name}>{p.name}</option>
+          ))}
+        </select>
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 32, justifyContent: 'center', marginBottom: 32 }}>
         <div style={{ flex: 1, maxWidth: 340 }}>
@@ -97,7 +89,7 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
               onChange={(e) => setSelectedPattern(e.target.value)}
               style={{ fontSize: 16, padding: '4px 8px' }}
             >
-              {SCALES_PATTERNS.map((p) => (
+              {SCALES_PATTERNS.map((p: any) => (
                 <option key={p.name} value={p.name}>{p.name}</option>
               ))}
             </select>
