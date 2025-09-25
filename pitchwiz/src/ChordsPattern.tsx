@@ -45,6 +45,56 @@ const ChordsPattern: React.FC = () => {
           <div style={{ textAlign: 'center', margin: '8px 0', fontSize: 16 }}>
             Notes: {getPatternNotes().join(' - ')}
           </div>
+          {/* Root note selector in two rows, like ScalesPattern */}
+          <div style={{ margin: '12px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {MAIN_KEYBOARD_PATTERN.slice(0, 7).map((key, idx) => (
+                <button
+                  key={key.label}
+                  style={{
+                    padding: '4px 10px',
+                    background: rootIndex % 12 === idx ? '#1976d2' : '#f0f0f0',
+                    color: rootIndex % 12 === idx ? '#fff' : '#222',
+                    border: '1px solid #ccc',
+                    borderRadius: 4,
+                    fontWeight: rootIndex % 12 === idx ? 'bold' : 'normal',
+                    cursor: 'pointer',
+                    minWidth: 32
+                  }}
+                  onClick={() => {
+                    setRootIndex(idx);
+                  }}
+                >
+                  {key.label}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {MAIN_KEYBOARD_PATTERN.slice(7, 12).concat([MAIN_KEYBOARD_PATTERN[11]]).map((key, idx) => {
+                const globalIdx = idx + 7;
+                return (
+                  <button
+                    key={key.label}
+                    style={{
+                      padding: '4px 10px',
+                      background: rootIndex % 12 === globalIdx ? '#1976d2' : '#f0f0f0',
+                      color: rootIndex % 12 === globalIdx ? '#fff' : '#222',
+                      border: '1px solid #ccc',
+                      borderRadius: 4,
+                      fontWeight: rootIndex % 12 === globalIdx ? 'bold' : 'normal',
+                      cursor: 'pointer',
+                      minWidth: 32
+                    }}
+                    onClick={() => {
+                      setRootIndex(globalIdx);
+                    }}
+                  >
+                    {key.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
         <MiniKeyboard notes={getPatternNotes()} root={MAIN_KEYBOARD_PATTERN[rootIndex]?.label} />
       </div>

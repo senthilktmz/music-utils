@@ -5,6 +5,7 @@ interface MiniKeyboardProps {
   root?: string;   // e.g. "F#"
   width?: number;
   height?: number;
+  onKeyClick?: (note: string, index: number) => void; // NEW: handle key click
 }
 
 const NOTE_SEQUENCE = [
@@ -13,13 +14,11 @@ const NOTE_SEQUENCE = [
 const WHITE_NOTES = ["C", "D", "E", "F", "G", "A", "B"];
 
 function getPatternOffsets(notes: string[], root: string) {
-  // Calculate semitone offsets for each note in the pattern from the root
   const rootIdx = NOTE_SEQUENCE.indexOf(root);
   return notes.map(n => (NOTE_SEQUENCE.indexOf(n) - rootIdx + 12) % 12);
 }
 
 function getVisibleKeyboard(root: string, patternOffsets: number[], extra: number = 12) {
-  // Build 1 octave before, pattern, 1 octave after
   const rootIdx = NOTE_SEQUENCE.indexOf(root);
   const totalKeys = patternOffsets.length + 2 * extra;
   let keys: { note: string, midi: number, offset: number }[] = [];
@@ -31,23 +30,22 @@ function getVisibleKeyboard(root: string, patternOffsets: number[], extra: numbe
   return keys;
 }
 
-const MiniKeyboard: React.FC<MiniKeyboardProps> = ({ notes, root, width = 280, height = 80 }) => {
+const MiniKeyboard: React.FC<MiniKeyboardProps> = ({ notes, root, width = 280, height = 80, onKeyClick }) => {
   if (!root || notes.length === 0) return null;
   const patternOffsets = getPatternOffsets(notes, root);
   const keys = getVisibleKeyboard(root, patternOffsets, 12);
   const whiteKeys = keys.filter(k => WHITE_NOTES.includes(k.note));
   const keyWidth = width / whiteKeys.length;
-  // Map each key to x position
   let whiteX = 0;
   const whiteKeyPositions = keys.map((k, i) => {
     if (WHITE_NOTES.includes(k.note)) {
-      const pos = { ...k, x: whiteX };
+      const pos = { ...k, x: whiteX, index: i };
       whiteX += keyWidth;
       return pos;
     }
     return null;
-  }).filter(Boolean) as (typeof keys[0] & { x: number })[];
-  // Black key positions
+  }).filter(Boolean) as (typeof keys[0] & { x: number, index: number })[];
+
   const blackKeyPositions = whiteKeyPositions.map((wkp, i, arr) => {
     const idx = NOTE_SEQUENCE.indexOf(wkp.note);
     const nextIdx = (idx + 1) % 12;
@@ -57,13 +55,13 @@ const MiniKeyboard: React.FC<MiniKeyboardProps> = ({ notes, root, width = 280, h
         note: blackNote,
         x: wkp.x + keyWidth * 0.7,
         midi: wkp.midi + 1,
-        offset: wkp.offset + 1
+        offset: wkp.offset + 1,
+        index: wkp.index + 1
       };
     }
     return null;
-  }).filter(Boolean) as { note: string, x: number, midi: number, offset: number }[];
+  }).filter(Boolean) as (typeof keys[0] & { x: number, index: number })[];
 
-  // Highlight only keys whose offset from root matches a pattern offset
   const highlightSet = new Set(patternOffsets);
 
   return (
@@ -93,6 +91,8 @@ const MiniKeyboard: React.FC<MiniKeyboardProps> = ({ notes, root, width = 280, h
           stroke="#222"
           rx={3}
           ry={3}
+          onClick={onKeyClick ? () => onKeyClick(key.note, key.index) : undefined}
+          style={{ cursor: onKeyClick ? 'pointer' : 'default' }}
         />
       ))}
       {/* Black keys */}
@@ -107,6 +107,8 @@ const MiniKeyboard: React.FC<MiniKeyboardProps> = ({ notes, root, width = 280, h
           stroke="#111"
           rx={2}
           ry={2}
+          onClick={onKeyClick ? () => onKeyClick(key.note, key.index) : undefined}
+          style={{ cursor: onKeyClick ? 'pointer' : 'default' }}
         />
       ))}
     </svg>
