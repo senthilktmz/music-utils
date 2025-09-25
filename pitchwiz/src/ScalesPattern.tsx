@@ -71,21 +71,27 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
   // Only pass sliderOffsetX to the slider when not dragging
   const sliderOffsetProp = isDragging ? undefined : sliderOffsetX;
 
-  // Helper: Map note names to frequencies for the 4th octave (C4 = 261.63 Hz)
-  const noteToFrequency = (note: string) => {
-    const NOTE_FREQS: { [note: string]: number } = {
-      'C': 261.63, 'C#': 277.18, 'D': 293.66, 'D#': 311.13, 'E': 329.63, 'F': 349.23,
-      'F#': 369.99, 'G': 392.00, 'G#': 415.30, 'A': 440.00, 'A#': 466.16, 'B': 493.88,
-    };
-    return NOTE_FREQS[note] || 261.63;
+  // Helper: Map note sequence to ascending frequencies starting from C4
+  const getNoteFrequenciesForScale = (notes: string[]) => {
+    const NOTE_TO_SEMITONE: Record<string, number> = { 'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11 };
+    let octave: number = 4;
+    let prevSemitone: number | null = null;
+    return notes.map((note) => {
+      const semitone = NOTE_TO_SEMITONE[note as keyof typeof NOTE_TO_SEMITONE];
+      if (prevSemitone !== null && semitone <= prevSemitone) octave++;
+      prevSemitone = semitone;
+      const midiNumber = 12 * (octave + 1) + semitone - 12; // C4 = 60
+      return 440 * Math.pow(2, (midiNumber - 69) / 12);
+    });
   };
 
   const playScale = async () => {
     if (isPlaying) return;
     const notes = getPatternNotes();
+    const freqs = getNoteFrequenciesForScale(notes);
     setIsPlaying(true);
     isStoppedRef.current = false;
-    for (let i = 0; i < notes.length; i++) {
+    for (let i = 0; i < freqs.length; i++) {
       if (isStoppedRef.current) break;
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
       audioContextRef.current = ctx;
@@ -97,7 +103,7 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
       gain.connect(ctx.destination);
       const osc = ctx.createOscillator();
       osc.type = 'sine';
-      osc.frequency.value = noteToFrequency(notes[i]);
+      osc.frequency.value = freqs[i];
       osc.connect(gain);
       osc.start();
       oscillatorsRef.current = [osc];
