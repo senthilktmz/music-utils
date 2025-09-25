@@ -1,26 +1,29 @@
 import React, { useState, useEffect } from "react";
 import ScalesPattern from "./ScalesPattern";
 
-// Use highly contrasting colors
-const ROW_COLORS = ["#ffe082", "#90caf9", "#ffab91", "#a5d6a7"]; // yellow, blue, orange, green
+const ROW_COLORS = ["#ffe082", "#90caf9", "#ffab91", "#a5d6a7"];
 const KEY_WIDTH = 40;
-const KEYBOARD_LENGTH = 36; // matches MAIN_KEYBOARD_PATTERN.length
-const HORIZONTAL_MARGIN = 24; // px, matches marginLeft/marginRight
+const KEYBOARD_LENGTH = 36;
+const HORIZONTAL_MARGIN = 24;
+
+const TrashIcon = () => (
+  <span style={{ fontWeight: "bold", fontSize: 22, color: "#b71c1c", pointerEvents: "none" }}>&#128465;</span>
+);
+
+interface Instance { id: number; }
 
 const ScalesMulti: React.FC = () => {
-  const [instances, setInstances] = useState<number[]>([0]);
+  const [instances, setInstances] = useState<Instance[]>([{ id: 0 }]);
   const [nextId, setNextId] = useState(1);
-  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [selectedId, setSelectedId] = useState(0);
   const [zoom, setZoom] = useState(60); // percent
   const [maxZoom, setMaxZoom] = useState(120);
 
-  // Dynamically calculate maxZoom so keyboard never overflows window
   useEffect(() => {
     const handleResize = () => {
-      const windowWidth = window.innerWidth - 2 * HORIZONTAL_MARGIN - 48; // allow some margin and scrollbar/extra
+      const windowWidth = window.innerWidth - 2 * HORIZONTAL_MARGIN - 24;
       const max = Math.floor((windowWidth / (KEY_WIDTH * KEYBOARD_LENGTH)) * 100);
       setMaxZoom(Math.max(30, Math.min(120, max)));
-      // Clamp zoom if above new max
       setZoom(z => Math.min(z, Math.max(30, Math.min(120, max))));
     };
     handleResize();
@@ -29,11 +32,15 @@ const ScalesMulti: React.FC = () => {
   }, []);
 
   const handleAdd = () => {
-    setInstances((prev) => [...prev, nextId]);
+    setInstances((prev) => [...prev, { id: nextId }]);
     setNextId((id) => id + 1);
   };
 
-  const handleSelect = (idx: number) => setSelectedIdx(idx);
+  const handleSelect = (id: number) => setSelectedId(id);
+  const handleRemove = (id: number) => {
+    setInstances((prev) => prev.filter(x => x.id !== id));
+    setSelectedId((prevId) => prevId === id ? 0 : prevId);
+  };
 
   return (
     <div>
@@ -51,20 +58,35 @@ const ScalesMulti: React.FC = () => {
         <span>{zoom}%</span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 36, marginLeft: 24, marginRight: 24 }}>
-        {instances.map((id, idx) => (
+        {instances.map((instance) => (
           <div
-            key={id}
+            key={instance.id}
             style={{
-              background: ROW_COLORS[idx % ROW_COLORS.length],
+              background: ROW_COLORS[instance.id % ROW_COLORS.length],
               borderRadius: 10,
               padding: 12,
-              border: idx === selectedIdx ? '4px solid #222' : '2px solid #bbb',
-              boxShadow: idx === selectedIdx ? '0 0 12px #2224' : undefined,
+              border: instance.id === selectedId ? '4px solid #222' : '2px solid #bbb',
+              boxShadow: instance.id === selectedId ? '0 0 12px #2224' : undefined,
               cursor: 'pointer',
-              transition: 'border 0.2s, box-shadow 0.2s'
+              transition: 'border 0.2s, box-shadow 0.2s',
+              position: 'relative'
             }}
-            onClick={() => handleSelect(idx)}
+            onClick={() => handleSelect(instance.id)}
           >
+            <button
+              onClick={e => { e.stopPropagation(); handleRemove(instance.id); }}
+              style={{
+                position: 'absolute', top: 8, right: 8, zIndex: 2,
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: 4, borderRadius: '50%',
+                transition: 'background 0.2s',
+                outline: 'none',
+              }}
+              aria-label="Remove instance"
+              tabIndex={0}
+            >
+              <TrashIcon />
+            </button>
             <ScalesPattern zoom={zoom} />
           </div>
         ))}
