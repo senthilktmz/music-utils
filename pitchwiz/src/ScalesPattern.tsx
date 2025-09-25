@@ -71,16 +71,16 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
   // Only pass sliderOffsetX to the slider when not dragging
   const sliderOffsetProp = isDragging ? undefined : sliderOffsetX;
 
-  // Helper: Map note sequence to ascending frequencies starting from C4
+  // Helper: Map note sequence to ascending frequencies starting from C6 (2 octaves above middle C)
   const getNoteFrequenciesForScale = (notes: string[]) => {
     const NOTE_TO_SEMITONE: Record<string, number> = { 'C': 0, 'C#': 1, 'D': 2, 'D#': 3, 'E': 4, 'F': 5, 'F#': 6, 'G': 7, 'G#': 8, 'A': 9, 'A#': 10, 'B': 11 };
-    let octave: number = 4;
+    let octave: number = 6; // Start at C6 (2 octaves above C4)
     let prevSemitone: number | null = null;
     return notes.map((note) => {
       const semitone = NOTE_TO_SEMITONE[note as keyof typeof NOTE_TO_SEMITONE];
       if (prevSemitone !== null && semitone <= prevSemitone) octave++;
       prevSemitone = semitone;
-      const midiNumber = 12 * (octave + 1) + semitone - 12; // C4 = 60
+      const midiNumber = 12 * (octave + 1) + semitone - 12; // C4 = 60, C6 = 84
       return 440 * Math.pow(2, (midiNumber - 69) / 12);
     });
   };
