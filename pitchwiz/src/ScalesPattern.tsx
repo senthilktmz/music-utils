@@ -133,23 +133,28 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns, sca
     oscillatorsRef.current = [];
   };
 
-  // Show extra Carnatic Raga info if in Carnatic Scales mode
-  let carnaticDetails = null;
+  // Combine Root key, Notes, and Carnatic details in a single white box
+  let infoBox = null;
   if (
-    scalesPatternType === "carnatic_scales" &&
-    ragasPatterns &&
-    selectedPattern &&
-    typeof ragasPatterns === 'object' &&
-    !Array.isArray(ragasPatterns) &&
-    Object.prototype.hasOwnProperty.call(ragasPatterns, selectedPattern)
+    (scalesPatternType === "carnatic_scales" && ragasPatterns && selectedPattern && typeof ragasPatterns === 'object' && !Array.isArray(ragasPatterns) && Object.prototype.hasOwnProperty.call(ragasPatterns, selectedPattern)) ||
+    scalesPatternType === "scales"
   ) {
-    const [mela, western, arohana, avarohana] = (ragasPatterns as Record<string, string[]>)[selectedPattern];
-    carnaticDetails = (
-      <div style={{ margin: '12px 0', background: '#fffbe6', borderRadius: 6, padding: '10px 16px', border: '1px solid #ffe082', fontSize: 15 }}>
-        <div><b>Mela:</b> {mela}</div>
-        <div><b>Western Equivalent:</b> {western}</div>
-        <div><b>Arohana:</b> {arohana}</div>
-        <div><b>Avarohana:</b> {avarohana}</div>
+    let mela, western, arohana, avarohana;
+    if (scalesPatternType === "carnatic_scales") {
+      [mela, western, arohana, avarohana] = (ragasPatterns as Record<string, string[]>)[selectedPattern] || [];
+    }
+    infoBox = (
+      <div style={{ margin: '12px 0', background: '#fffbe6', borderRadius: 6, padding: '14px 18px', border: '1px solid #ffe082', fontSize: 15, textAlign: 'left', minWidth: 260 }}>
+        <div style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 4 }}>Root key: {ROOT_NOTES[rootIndex]}</div>
+        <div style={{ marginBottom: 8, fontSize: 16 }}><b>Notes:</b> {getPatternNotes().join(' - ')}</div>
+        {scalesPatternType === "carnatic_scales" && (
+          <>
+            <div><b>Mela:</b> {mela}</div>
+            <div><b>Western Equivalent:</b> {western}</div>
+            <div><b>Arohana:</b> {arohana}</div>
+            <div><b>Avarohana:</b> {avarohana}</div>
+          </>
+        )}
       </div>
     );
   }
@@ -195,14 +200,8 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns, sca
       </div>
       {/* Root key, Notes, MiniKeyboard, and Play/Stop buttons on same line */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 32, marginBottom: 32, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, minWidth: 160 }}>
-          <div style={{ fontWeight: 'bold', fontSize: 18 }}>
-            Root key: {ROOT_NOTES[rootIndex]}
-          </div>
-          <div style={{ margin: '8px 0', fontSize: 16 }}>
-            Notes: {getPatternNotes().join(' - ')}
-          </div>
-          {carnaticDetails}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, minWidth: 260 }}>
+          {infoBox}
         </div>
         <MiniKeyboard notes={getPatternNotes()} root={ROOT_NOTES[rootIndex]} width={MINI_KEY_WIDTH} height={MINI_KEY_HEIGHT} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 16 }}>
