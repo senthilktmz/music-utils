@@ -58,7 +58,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ activeTab, setActiveTab }) => (
           }}
           onClick={() => setActiveTab("scales")}
         >
-          Scales
+          Western Scales
         </button>
         <button
           style={{
