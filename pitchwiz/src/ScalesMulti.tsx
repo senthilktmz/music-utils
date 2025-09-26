@@ -12,7 +12,11 @@ const TrashIcon = () => (
 
 interface Instance { id: number; }
 
-const ScalesMulti: React.FC = () => {
+interface ScalesMultiProps {
+  patterns: any[];
+}
+
+const ScalesMulti: React.FC<ScalesMultiProps> = ({ patterns }) => {
   const [instances, setInstances] = useState<Instance[]>([{ id: 0 }]);
   const [nextId, setNextId] = useState(1);
   const [selectedId, setSelectedId] = useState(0);
@@ -60,23 +64,23 @@ const ScalesMulti: React.FC = () => {
         <span>{zoom}%</span>
       </div> */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 36, marginLeft: 24, marginRight: 24 }}>
-        {instances.map((instance) => (
+        {[...instances].map(({ id }, idx) => (
           <div
-            key={instance.id}
+            key={id}
             style={{
-              background: ROW_COLORS[instance.id % ROW_COLORS.length],
+              background: ROW_COLORS[id % ROW_COLORS.length],
               borderRadius: 10,
               padding: 12,
-              border: instance.id === selectedId ? '4px solid #222' : '2px solid #bbb',
-              boxShadow: instance.id === selectedId ? '0 0 12px #2224' : undefined,
+              border: id === selectedId ? '4px solid #222' : '2px solid #bbb',
+              boxShadow: id === selectedId ? '0 0 12px #2224' : undefined,
               cursor: 'pointer',
               transition: 'border 0.2s, box-shadow 0.2s',
               position: 'relative'
             }}
-            onClick={() => handleSelect(instance.id)}
+            onClick={() => handleSelect(id)}
           >
             <button
-              onClick={e => { e.stopPropagation(); handleRemove(instance.id); }}
+              onClick={e => { e.stopPropagation(); handleRemove(id); }}
               style={{
                 position: 'absolute', top: 8, right: 8, zIndex: 2,
                 background: '#e53935', color: 'white', border: 'none',
@@ -91,7 +95,7 @@ const ScalesMulti: React.FC = () => {
             >
               <span style={{ fontSize: 16, fontWeight: "bold", lineHeight: 1 }}>&#10005;</span>
             </button>
-            <ScalesPattern zoom={zoom} />
+            <ScalesPattern zoom={zoom} patterns={patterns} />
           </div>
         ))}
       </div>

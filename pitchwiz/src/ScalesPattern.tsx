@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
 import MiniKeyboard from "./MiniKeyboard";
-import { SCALES_PATTERNS_ARRAY } from "./patterns/Scales";
 import { INTERVAL_SEQUENCE, generateScalePattern } from "./patterns/patternUtils";
 import { MAIN_KEYBOARD_PATTERN } from "./patterns/MainKeyboard";
 
@@ -10,11 +9,10 @@ const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", 
 
 interface ScalesPatternProps {
   zoom?: number;
+  patterns: any[];
 }
 
-const SCALES_PATTERNS = SCALES_PATTERNS_ARRAY.map(generateScalePattern);
-
-const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
+const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns }) => {
   // Scale key widths and heights by zoom percent
   const KEY_WIDTH = 40 * (zoom / 100);
   const KEY_HEIGHT = 40 * (zoom / 100);
@@ -22,7 +20,7 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
   const MINI_KEY_HEIGHT = 80 * (zoom / 100);
   const KEYBOARD_LENGTH = MAIN_KEYBOARD_PATTERN.length;
 
-  const [selectedPattern, setSelectedPattern] = useState<string>(SCALES_PATTERNS[0].name);
+  const [selectedPattern, setSelectedPattern] = useState<string>(patterns[0].name);
   const [rootIndex, setRootIndex] = useState(0); // index in ROOT_NOTES
   const [sliderOffsetX, setSliderOffsetX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -31,7 +29,7 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
   const oscillatorsRef = useRef<OscillatorNode[]>([]);
   const isStoppedRef = React.useRef(false);
 
-  const currentPattern = SCALES_PATTERNS.find((p: any) => p.name === selectedPattern);
+  const currentPattern = patterns.find((p: any) => p.name === selectedPattern);
 
   // Find the first occurrence of the root note in MAIN_KEYBOARD_PATTERN
   const alignSliderToRoot = (rootIdx: number) => {
@@ -60,10 +58,10 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
   const getPatternNotes = () => {
     if (!currentPattern) return [];
     return currentPattern.pattern
-      .map((rect, i) => rect.type !== 'scale_interval_blank' ? i : null)
-      .filter(i => i !== null)
-      .map((i) => {
-        const idx = (rootIndex + (i as number)) % 12;
+      .map((rect: any, i: number) => rect.type !== 'scale_interval_blank' ? i : null)
+      .filter((i: number | null) => i !== null)
+      .map((i: number) => {
+        const idx = (rootIndex + i) % 12;
         return ROOT_NOTES[idx];
       });
   };
@@ -161,7 +159,7 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100 }) => {
             onChange={(e) => setSelectedPattern(e.target.value)}
             style={{ fontSize: 16, padding: '4px 8px' }}
           >
-            {SCALES_PATTERNS.map((p: any) => (
+            {patterns.map((p: any) => (
               <option key={p.name} value={p.name}>{p.name}</option>
             ))}
           </select>

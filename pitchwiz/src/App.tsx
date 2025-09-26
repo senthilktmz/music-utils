@@ -15,10 +15,8 @@ function App() {
 
   let content;
   if (activeTab === "chords") content = <ChordsMulti />;
-  else if (activeTab === "scales") content = <ScalesMulti />;
+  else if (activeTab === "scales") content = <ScalesMulti patterns={SCALES_PATTERNS_ARRAY.map(generateScalePattern)} />;
   else if (activeTab === "intervals") content = <Intervals />;
-
-  const SCALES_PATTERNS = SCALES_PATTERNS_ARRAY.map(generateScalePattern);
 
   return (
     <div className="App">
