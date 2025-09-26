@@ -70,13 +70,13 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
 
   const currentPattern = CHORDS_PATTERNS.find((p) => p.name === selectedPattern);
 
-  // Helper: Map note names to frequencies for the 4th octave (C4 = 261.63 Hz)
+  // Helper: Map note names to frequencies for the 5th octave (C5 = 523.25 Hz)
   const noteToFrequency = (note: string) => {
     const NOTE_FREQS: { [note: string]: number } = {
-      'C': 261.63, 'C#': 277.18, 'D': 293.66, 'D#': 311.13, 'E': 329.63, 'F': 349.23,
-      'F#': 369.99, 'G': 392.00, 'G#': 415.30, 'A': 440.00, 'A#': 466.16, 'B': 493.88,
+      'C': 523.25, 'C#': 554.37, 'D': 587.33, 'D#': 622.25, 'E': 659.25, 'F': 698.46,
+      'F#': 739.99, 'G': 783.99, 'G#': 830.61, 'A': 880.00, 'A#': 932.33, 'B': 987.77,
     };
-    return NOTE_FREQS[note] || 261.63;
+    return NOTE_FREQS[note] || 523.25;
   };
 
   const playChord = () => {
