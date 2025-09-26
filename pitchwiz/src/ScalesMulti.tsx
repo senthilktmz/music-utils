@@ -14,9 +14,11 @@ interface Instance { id: number; }
 
 interface ScalesMultiProps {
   patterns: any[];
+  scalesPatternType: string;
+  ragasPatterns: any[];
 }
 
-const ScalesMulti: React.FC<ScalesMultiProps> = ({ patterns }) => {
+const ScalesMulti: React.FC<ScalesMultiProps> = ({ patterns, scalesPatternType, ragasPatterns }) => {
   const [instances, setInstances] = useState<Instance[]>([{ id: 0 }]);
   const [nextId, setNextId] = useState(1);
   const [selectedId, setSelectedId] = useState(0);
@@ -95,7 +97,7 @@ const ScalesMulti: React.FC<ScalesMultiProps> = ({ patterns }) => {
             >
               <span style={{ fontSize: 16, fontWeight: "bold", lineHeight: 1 }}>&#10005;</span>
             </button>
-            <ScalesPattern zoom={zoom} patterns={patterns} />
+            <ScalesPattern zoom={zoom} patterns={patterns} scalesPatternType={scalesPatternType} ragasPatterns={ragasPatterns} />
           </div>
         ))}
       </div>

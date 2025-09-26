@@ -15,9 +15,10 @@ function App() {
   const [activeTab, setActiveTab] = useState("chords");
 
   let content;
+  const RAGAS_PATTERNS = RAGAS_PATTERNS_ARRAY.map(generateScalePattern);
   if (activeTab === "chords") content = <ChordsMulti />;
-  else if (activeTab === "scales") content = <ScalesMulti patterns={SCALES_PATTERNS_ARRAY.map(generateScalePattern)} />;
-  else if (activeTab === "carnatic_scales") content = <ScalesMulti patterns={RAGAS_PATTERNS_ARRAY.map(generateScalePattern)} />;
+  else if (activeTab === "scales") content = <ScalesMulti patterns={SCALES_PATTERNS_ARRAY.map(generateScalePattern)} scalesPatternType={activeTab} ragasPatterns={RAGAS_PATTERNS} />;
+  else if (activeTab === "carnatic_scales") content = <ScalesMulti patterns={RAGAS_PATTERNS_ARRAY.map(generateScalePattern)} scalesPatternType={activeTab} ragasPatterns={RAGAS_PATTERNS} />;
   else if (activeTab === "intervals") content = <Intervals />;
 
   return (

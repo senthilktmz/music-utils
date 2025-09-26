@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
 import MiniKeyboard from "./MiniKeyboard";
@@ -10,9 +10,11 @@ const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", 
 interface ScalesPatternProps {
   zoom?: number;
   patterns: any[];
+  scalesPatternType: string;
+  ragasPatterns: any[];
 }
 
-const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns }) => {
+const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns, scalesPatternType, ragasPatterns }) => {
   // Scale key widths and heights by zoom percent
   const KEY_WIDTH = 40 * (zoom / 100);
   const KEY_HEIGHT = 40 * (zoom / 100);
@@ -21,6 +23,11 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns }) =
   const KEYBOARD_LENGTH = MAIN_KEYBOARD_PATTERN.length;
 
   const [selectedPattern, setSelectedPattern] = useState<string>(patterns[0].name);
+
+  useEffect(() => {
+    setSelectedPattern(patterns[0].name);
+  }, [patterns]);
+
   const [rootIndex, setRootIndex] = useState(0); // index in ROOT_NOTES
   const [sliderOffsetX, setSliderOffsetX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);

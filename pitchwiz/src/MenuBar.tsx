@@ -65,9 +65,9 @@ const MenuBar: React.FC<MenuBarProps> = ({ activeTab, setActiveTab }) => (
                 style={{
                     padding: "10px 24px",
                     border: "none",
-                    borderBottom: activeTab === "scales" ? "3px solid #007bff" : "none",
+                    borderBottom: activeTab === "carnatic_scales" ? "3px solid #007bff" : "none",
                     background: "none",
-                    fontWeight: activeTab === "scales" ? "bold" : "normal",
+                    fontWeight: activeTab === "carnatic_scales" ? "bold" : "normal",
                     cursor: "pointer"
                 }}
                 onClick={() => setActiveTab("carnatic_scales")}
