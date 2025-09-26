@@ -12,7 +12,7 @@ const TrashIcon = () => (
 
 interface Instance { id: number; }
 
-const ChordsMulti: React.FC = () => {
+const ChordsMulti: React.FC<{ addScratchPadItem: (item: any) => void }> = ({ addScratchPadItem }) => {
   const [instances, setInstances] = useState<Instance[]>([{ id: 0 }]);
   const [nextId, setNextId] = useState(1);
   const [selectedId, setSelectedId] = useState(0);
@@ -98,7 +98,7 @@ const ChordsMulti: React.FC = () => {
             >
               <span style={{ fontSize: 16, fontWeight: "bold", lineHeight: 1 }}>&#10005;</span>
             </button>
-            <ChordsPattern zoom={zoom} />
+            <ChordsPattern zoom={zoom} addScratchPadItem={addScratchPadItem} />
           </div>
         ))}
       </div>

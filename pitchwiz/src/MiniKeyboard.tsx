@@ -65,53 +65,53 @@ const MiniKeyboard: React.FC<MiniKeyboardProps> = ({ notes, root, width = 280, h
   const highlightSet = new Set(patternOffsets);
 
   return (
-    <svg width={width} height={height + 20} style={{ background: '#fcfbe6', borderRadius: 8, boxShadow: '0 2px 8px #0001' }}>
-      {/* Root note label */}
-      {root && (
-        <text
-          x={width / 2}
-          y={22}
-          textAnchor="middle"
-          fontWeight="bold"
-          fontSize={24}
-          fill="#444"
-        >
-          {root}
-        </text>
-      )}
-      {/* White keys */}
-      {whiteKeyPositions.map((key, i) => (
-        <rect
-          key={key.note + i}
-          x={key.x}
-          y={30}
-          width={keyWidth}
-          height={height - 10}
-          fill={highlightSet.has(key.offset) ? (key.note === root ? "#d44" : "#e88") : "white"}
-          stroke="#222"
-          rx={3}
-          ry={3}
-          onClick={onKeyClick ? () => onKeyClick(key.note, key.index) : undefined}
-          style={{ cursor: onKeyClick ? 'pointer' : 'default' }}
-        />
-      ))}
-      {/* Black keys */}
-      {blackKeyPositions.map((key, i) => (
-        <rect
-          key={key.note + i + "b"}
-          x={key.x}
-          y={30}
-          width={keyWidth * 0.6}
-          height={(height - 10) * 0.65}
-          fill={highlightSet.has(key.offset) ? (key.note === root ? "#a11" : "#c44") : "#222"}
-          stroke="#111"
-          rx={2}
-          ry={2}
-          onClick={onKeyClick ? () => onKeyClick(key.note, key.index) : undefined}
-          style={{ cursor: onKeyClick ? 'pointer' : 'default' }}
-        />
-      ))}
-    </svg>
+      <svg width={width} height={height + 20} style={{ background: '#fcfbe6', borderRadius: 8, boxShadow: '0 2px 8px #0001' }}>
+        {/* Root note label */}
+        {root && (
+            <text
+                x={width / 2}
+                y={22}
+                textAnchor="middle"
+                fontWeight="bold"
+                fontSize={24}
+                fill="#444"
+            >
+              {root}
+            </text>
+        )}
+        {/* White keys */}
+        {whiteKeyPositions.map((key, i) => (
+            <rect
+                key={key.note + i}
+                x={key.x}
+                y={30}
+                width={keyWidth}
+                height={height - 10}
+                fill={highlightSet.has(key.offset) ? (key.note === root ? "#d44" : "#e88") : "white"}
+                stroke="#222"
+                rx={3}
+                ry={3}
+                onClick={onKeyClick ? () => onKeyClick(key.note, key.index) : undefined}
+                style={{ cursor: onKeyClick ? 'pointer' : 'default' }}
+            />
+        ))}
+        {/* Black keys */}
+        {blackKeyPositions.map((key, i) => (
+            <rect
+                key={key.note + i + "b"}
+                x={key.x}
+                y={30}
+                width={keyWidth * 0.6}
+                height={(height - 10) * 0.65}
+                fill={highlightSet.has(key.offset) ? (key.note === root ? "#a11" : "#c44") : "#222"}
+                stroke="#111"
+                rx={2}
+                ry={2}
+                onClick={onKeyClick ? () => onKeyClick(key.note, key.index) : undefined}
+                style={{ cursor: onKeyClick ? 'pointer' : 'default' }}
+            />
+        ))}
+      </svg>
   );
 };
 

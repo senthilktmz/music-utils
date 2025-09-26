@@ -9,6 +9,7 @@ const ROOT_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", 
 
 interface ChordsPatternProps {
   zoom?: number;
+  addScratchPadItem?: (item: any) => void;
 }
 
 // Define the full chromatic interval sequence (1 octave)
@@ -53,7 +54,7 @@ function generateChordPattern([name, ...intervals]: string[]) {
 
 const CHORDS_PATTERNS = CHORDS_PATTERNS_ARRAY.map(generateChordPattern);
 
-const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
+const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPadItem }) => {
   const KEY_WIDTH = 40 * (zoom / 100);
   const KEY_HEIGHT = 40 * (zoom / 100);
   const MINI_KEY_WIDTH = 280 * (zoom / 100);
@@ -155,6 +156,20 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
   // Only pass sliderOffsetX to the slider when not dragging
   const sliderOffsetProp = isDragging ? undefined : sliderOffsetX;
 
+  // Add chord to scratch pad
+  const handleAddToScratchPad = () => {
+    if (!currentPattern) return;
+    const chordInfo = {
+      root: ROOT_NOTES[rootIndex],
+      type: currentPattern.name,
+      notes: getPatternNotes(),
+      timestamp: Date.now()
+    };
+    if (typeof addScratchPadItem === 'function') {
+      addScratchPadItem(chordInfo);
+    }
+  };
+
   return (
     <div>
       {/* Root key selector row and chord selection dropdown on same line */}
@@ -204,7 +219,35 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100 }) => {
             Notes: {getPatternNotes().join(' - ')}
           </div>
         </div>
-        <MiniKeyboard notes={getPatternNotes()} root={ROOT_NOTES[rootIndex]} width={MINI_KEY_WIDTH} height={MINI_KEY_HEIGHT} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <MiniKeyboard
+            notes={getPatternNotes()}
+            root={ROOT_NOTES[rootIndex]}
+            width={MINI_KEY_WIDTH}
+            height={MINI_KEY_HEIGHT}
+          />
+          <button
+            onClick={handleAddToScratchPad}
+            title="Add chord to Scratch Pad"
+            style={{
+              border: 'none',
+              background: '#1976d2',
+              color: 'white',
+              borderRadius: '50%',
+              width: 28,
+              height: 28,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 16,
+              cursor: 'pointer',
+              boxShadow: '0 1px 4px #0002',
+              marginLeft: 8
+            }}
+          >
+            <span style={{ fontWeight: 'bold', fontSize: 18, lineHeight: 1 }}>+</span>
+          </button>
+        </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 16 }}>
           <button onClick={playChord} disabled={isPlaying} style={{ marginBottom: 8, padding: '8px 24px', fontSize: 16, background: isPlaying ? '#bbb' : '#1976d2', color: '#fff', border: 'none', borderRadius: 4, cursor: isPlaying ? 'not-allowed' : 'pointer' }}>
             ▶ Play

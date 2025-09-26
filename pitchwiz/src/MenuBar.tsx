@@ -80,6 +80,20 @@ const MenuBar: React.FC<MenuBarProps> = ({ activeTab, setActiveTab }) => (
                 style={{
                     padding: "10px 24px",
                     border: "none",
+                    borderBottom: activeTab === "scratchpad" ? "3px solid #007bff" : "none",
+                    background: "none",
+                    fontWeight: activeTab === "scratchpad" ? "bold" : "normal",
+                    cursor: "pointer"
+                }}
+                onClick={() => setActiveTab("scratchpad")}
+            >
+                Scratch Pad
+            </button>
+
+            <button
+                style={{
+                    padding: "10px 24px",
+                    border: "none",
                     borderBottom: activeTab === "intervals" ? "3px solid #007bff" : "none",
                     background: "none",
                     fontWeight: activeTab === "intervals" ? "bold" : "normal",
@@ -89,6 +103,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ activeTab, setActiveTab }) => (
             >
                 Intervals
             </button>
+
         </div>
     </div>
   </nav>
