@@ -27,6 +27,10 @@ function App() {
         setTimeout(() => setToast(null), TOAST_DURATION);
     };
 
+    const removeScratchPadItem = (timestamp: number) => {
+        setScratchPadItems(items => items.filter(item => item.timestamp !== timestamp));
+    };
+
     let content;
     if (activeTab === "chords") content = <ChordsMulti addScratchPadItem={addScratchPadItem}/>;
     else if (activeTab === "scales") content =
@@ -36,7 +40,7 @@ function App() {
         <ScalesMulti patterns={RAGAS_PATTERNS_ARRAY.map(generateScalePattern)} scalesPatternType={activeTab}
                      ragasPatterns={RAGAS_PATTERNS}/>;
     else if (activeTab === "intervals") content = <Intervals/>;
-    else if (activeTab === "scratchpad") content = <ScratchPad items={scratchPadItems}/>;
+    else if (activeTab === "scratchpad") content = <ScratchPad items={scratchPadItems} removeItem={removeScratchPadItem}/>;
 
     return (
         <div className="App">

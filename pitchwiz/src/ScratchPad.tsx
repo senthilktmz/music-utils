@@ -1,10 +1,11 @@
 import React from "react";
 
 interface ScratchPadProps {
-  items: Array<{ root: string; type: string; notes: string[]; timestamp: number; noteFrequencies: number[] }>;
+  items: Array<{ root: string; type: string; notes: string[]; noteFrequencies: number[]; timestamp: number }>;
+  removeItem: (timestamp: number) => void;
 }
 
-const ScratchPad: React.FC<ScratchPadProps> = ({ items }) => {
+const ScratchPad: React.FC<ScratchPadProps> = ({ items, removeItem }) => {
   const playChord = (noteFrequencies: number[]) => {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const gain = ctx.createGain();
@@ -70,6 +71,29 @@ const ScratchPad: React.FC<ScratchPadProps> = ({ items }) => {
               style={{
                 position: 'absolute',
                 top: 6,
+                right: 6,
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                background: '#e53935',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: 14,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 3
+              }}
+              title="Remove from Scratch Pad"
+              onClick={e => { e.stopPropagation(); removeItem(item.timestamp); }}
+            >
+              -
+            </span>
+            <span
+              style={{
+                position: 'absolute',
+                bottom: 6,
                 right: 6,
                 width: 16,
                 height: 16,
