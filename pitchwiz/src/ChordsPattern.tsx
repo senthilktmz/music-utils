@@ -156,13 +156,20 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
   // Only pass sliderOffsetX to the slider when not dragging
   const sliderOffsetProp = isDragging ? undefined : sliderOffsetX;
 
-  // Add chord to scratch pad
+  // Add chord to scratch pad, including the sequence of notes (as frequencies)
   const handleAddToScratchPad = () => {
     if (!currentPattern) return;
+    const NOTE_FREQS: { [note: string]: number } = {
+      'C': 523.25, 'C#': 554.37, 'D': 587.33, 'D#': 622.25, 'E': 659.25, 'F': 698.46,
+      'F#': 739.99, 'G': 783.99, 'G#': 830.61, 'A': 880.00, 'A#': 932.33, 'B': 987.77,
+    };
+    const notes = getPatternNotes();
+    const noteFrequencies = notes.map(n => NOTE_FREQS[n] || 523.25);
     const chordInfo = {
       root: ROOT_NOTES[rootIndex],
       type: currentPattern.name,
-      notes: getPatternNotes(),
+      notes,
+      noteFrequencies,
       timestamp: Date.now()
     };
     if (typeof addScratchPadItem === 'function') {

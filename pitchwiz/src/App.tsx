@@ -13,12 +13,18 @@ import {RAGAS_PATTERNS_ARRAY} from "./patterns/Ragas";
 import {RAGAS_PATTERNS} from "./patterns/Ragas";
 import {generateScalePattern} from "./patterns/patternUtils";
 
+// Toast state
+const TOAST_DURATION = 1800;
+
 function App() {
     const [activeTab, setActiveTab] = useState("chords");
     const [scratchPadItems, setScratchPadItems] = useState<any[]>([]);
+    const [toast, setToast] = useState<string | null>(null);
 
     const addScratchPadItem = (item: any) => {
         setScratchPadItems(items => [...items, item]);
+        setToast(`${item.root} ${item.type} added to scratch pad`);
+        setTimeout(() => setToast(null), TOAST_DURATION);
     };
 
     let content;
@@ -36,6 +42,25 @@ function App() {
         <div className="App">
             <MenuBar activeTab={activeTab} setActiveTab={setActiveTab}/>
             <div style={{padding: '24px 0 0 0'}}>{content}</div>
+            {toast && (
+                <div style={{
+                  position: 'fixed',
+                  left: '50%',
+                  bottom: 40,
+                  transform: 'translateX(-50%)',
+                  background: '#1976d2',
+                  color: 'white',
+                  borderRadius: 8,
+                  padding: '12px 32px',
+                  fontSize: 18,
+                  fontWeight: 500,
+                  boxShadow: '0 2px 12px #0003',
+                  zIndex: 9999,
+                  opacity: 0.96
+                }}>
+                  {toast}
+                </div>
+            )}
             {/* Main content follows header */}
         </div>
     );
