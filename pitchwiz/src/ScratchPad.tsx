@@ -1,4 +1,5 @@
 import React from "react";
+import MiniKeyboard from "./MiniKeyboard";
 
 interface ScratchPadProps {
   items: Array<{ root: string; type: string; notes: string[]; noteFrequencies: number[]; timestamp: number }>;
@@ -34,8 +35,8 @@ const ScratchPad: React.FC<ScratchPadProps> = ({ items, removeItem }) => {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
-          gap: 18,
+          gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+          gap: '12px',
           marginTop: 32,
           justifyItems: 'center',
           alignItems: 'center',
@@ -45,28 +46,31 @@ const ScratchPad: React.FC<ScratchPadProps> = ({ items, removeItem }) => {
           <div
             key={item.timestamp + '-' + idx}
             style={{
-              width: 80,
-              height: 80,
+              width: 120,
+              height: 78,
               background: '#f5f8fa',
               border: '2px solid #1976d2',
               borderRadius: 12,
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              fontWeight: 'bold',
-              fontSize: 14,
-              color: '#1976d2',
               boxShadow: '0 2px 8px #0001',
               cursor: 'pointer',
               userSelect: 'none',
-              textAlign: 'center',
-              overflow: 'hidden',
-              whiteSpace: 'pre-line',
-              position: 'relative'
+              position: 'relative',
+              margin: 'auto',
+              paddingTop: 2,
+              overflow: 'visible'
             }}
             onClick={() => playChord(item.noteFrequencies)}
           >
-            {`${item.root} ${item.type.split('/')[0].trim()}`}
+            {item.notes && item.root ? (
+              <MiniKeyboard notes={item.notes} root={item.root} width={100} height={32} />
+            ) : null}
+            <div style={{ fontSize: 12, color: '#1976d2', fontWeight: 500, marginTop: 2, textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 100 }}>
+              {item.type.split('/')[0].trim()}
+            </div>
             <span
               style={{
                 position: 'absolute',
@@ -89,29 +93,6 @@ const ScratchPad: React.FC<ScratchPadProps> = ({ items, removeItem }) => {
               onClick={e => { e.stopPropagation(); removeItem(item.timestamp); }}
             >
               -
-            </span>
-            <span
-              style={{
-                position: 'absolute',
-                bottom: 6,
-                right: 6,
-                width: 16,
-                height: 16,
-                borderRadius: '50%',
-                background: '#1976d2',
-                color: '#fff',
-                fontWeight: 700,
-                fontSize: 12,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 2
-              }}
-              title={`Root: ${item.root}\nType: ${item.type}\nNotes: ${item.notes.join(' - ')}`}
-              onClick={e => { e.stopPropagation(); alert(`Root: ${item.root}\nType: ${item.type}\nNotes: ${item.notes.join(' - ')}`); }}
-            >
-              i
             </span>
           </div>
         ))}
