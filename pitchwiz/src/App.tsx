@@ -8,6 +8,7 @@ import ScalesMulti from "./ScalesMulti";
 import ChordsMulti from "./ChordsMulti";
 import Intervals from "./Intervals";
 import { SCALES_PATTERNS_ARRAY } from "./patterns/Scales";
+import { RAGAS_PATTERNS_ARRAY } from "./patterns/Ragas";
 import { generateScalePattern } from "./patterns/patternUtils";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
   let content;
   if (activeTab === "chords") content = <ChordsMulti />;
   else if (activeTab === "scales") content = <ScalesMulti patterns={SCALES_PATTERNS_ARRAY.map(generateScalePattern)} />;
+  else if (activeTab === "carnatic_scales") content = <ScalesMulti patterns={RAGAS_PATTERNS_ARRAY.map(generateScalePattern)} />;
   else if (activeTab === "intervals") content = <Intervals />;
 
   return (
