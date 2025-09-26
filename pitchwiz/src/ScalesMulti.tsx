@@ -15,7 +15,7 @@ interface Instance { id: number; }
 interface ScalesMultiProps {
   patterns: any[];
   scalesPatternType: string;
-  ragasPatterns: any[];
+  ragasPatterns: Record<string, string[]> | any[];
 }
 
 const ScalesMulti: React.FC<ScalesMultiProps> = ({ patterns, scalesPatternType, ragasPatterns }) => {

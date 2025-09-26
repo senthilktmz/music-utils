@@ -11,7 +11,7 @@ interface ScalesPatternProps {
   zoom?: number;
   patterns: any[];
   scalesPatternType: string;
-  ragasPatterns: any[];
+  ragasPatterns: Record<string, string[]> | any[];
 }
 
 const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns, scalesPatternType, ragasPatterns }) => {
@@ -133,6 +133,27 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns, sca
     oscillatorsRef.current = [];
   };
 
+  // Show extra Carnatic Raga info if in Carnatic Scales mode
+  let carnaticDetails = null;
+  if (
+    scalesPatternType === "carnatic_scales" &&
+    ragasPatterns &&
+    selectedPattern &&
+    typeof ragasPatterns === 'object' &&
+    !Array.isArray(ragasPatterns) &&
+    Object.prototype.hasOwnProperty.call(ragasPatterns, selectedPattern)
+  ) {
+    const [mela, western, arohana, avarohana] = (ragasPatterns as Record<string, string[]>)[selectedPattern];
+    carnaticDetails = (
+      <div style={{ margin: '12px 0', background: '#fffbe6', borderRadius: 6, padding: '10px 16px', border: '1px solid #ffe082', fontSize: 15 }}>
+        <div><b>Mela:</b> {mela}</div>
+        <div><b>Western Equivalent:</b> {western}</div>
+        <div><b>Arohana:</b> {arohana}</div>
+        <div><b>Avarohana:</b> {avarohana}</div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Root key selector row and scale selection dropdown on same line */}
@@ -181,6 +202,7 @@ const ScalesPattern: React.FC<ScalesPatternProps> = ({ zoom = 100, patterns, sca
           <div style={{ margin: '8px 0', fontSize: 16 }}>
             Notes: {getPatternNotes().join(' - ')}
           </div>
+          {carnaticDetails}
         </div>
         <MiniKeyboard notes={getPatternNotes()} root={ROOT_NOTES[rootIndex]} width={MINI_KEY_WIDTH} height={MINI_KEY_HEIGHT} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: 16 }}>
