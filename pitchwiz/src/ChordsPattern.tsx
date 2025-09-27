@@ -140,8 +140,8 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
   };
 
   // Find the first occurrence of the root note in MAIN_KEYBOARD_PATTERN
-  const alignSliderToRoot = (rootIdx: number) => {
-    const note = ROOT_NOTES[rootIdx];
+  const alignSliderToRoot = (idx: number) => {
+    const note = ROOT_NOTES[idx];
     const firstIdx = MAIN_KEYBOARD_PATTERN.findIndex(k => k.label === note);
     if (firstIdx !== -1) {
       setSliderOffsetX(firstIdx * KEY_WIDTH);
@@ -150,28 +150,20 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
     }
   };
 
-  // Only call alignSliderToRoot when rootIndex changes, not on every render or pattern change
-  useEffect(() => {
-    alignSliderToRoot(rootIndex);
-    // eslint-disable-next-line
-  }, [rootIndex]);
-
   // When a root button is clicked
   const handleRootButtonClick = (idx: number) => {
     setRootIndex(idx);
-    setIsDragging(false);
+    alignSliderToRoot(idx);
   };
 
-  // Clamp slider movement to the first octave B key of the main keyboard
+  // When the slider drag ends, update rootIndex and sliderOffsetX
   const handleSliderChange = (newRootIdx: number) => {
-    // Find the index of the first B key in MAIN_KEYBOARD_PATTERN
     const bKeyIndex = MAIN_KEYBOARD_PATTERN.findIndex(k => k.label === "B");
-    if (newRootIdx > bKeyIndex) {
-      setRootIndex(bKeyIndex);
-    } else {
-      setRootIndex(newRootIdx % 12);
-    }
-    setIsDragging(true);
+    const clampedIdx = newRootIdx > bKeyIndex ? bKeyIndex : newRootIdx % 12;
+    setRootIndex(clampedIdx);
+    const note = ROOT_NOTES[clampedIdx];
+    const firstIdx = MAIN_KEYBOARD_PATTERN.findIndex(k => k.label === note);
+    setSliderOffsetX(firstIdx * KEY_WIDTH);
   };
 
   // Map chord degrees to notes, placing 9/11/13 in the next octave and avoiding duplicate highlights

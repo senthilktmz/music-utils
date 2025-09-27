@@ -39,14 +39,6 @@ const PianoPattern: React.FC<PianoPatternProps> = ({
     }
   }, [controlledOffsetX, dragging]);
 
-  // Compute which key index the first rectangle aligns with
-  useEffect(() => {
-    if (onRootChange) {
-      const rootIndex = Math.round(offsetX / keyWidth);
-      onRootChange(rootIndex);
-    }
-  }, [offsetX, keyWidth, onRootChange]);
-
   // Drag logic
   useEffect(() => {
     if (!slidable || !dragging) return;
@@ -59,7 +51,14 @@ const PianoPattern: React.FC<PianoPatternProps> = ({
     };
     const onMouseUp = () => {
       setDragging(false);
+      // Only call onRootChange on drag end
+      if (onRootChange) {
+        const rootIndex = Math.round(offsetX / keyWidth);
+        onRootChange(rootIndex);
+      }
       document.body.style.cursor = "auto";
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
     };
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
@@ -67,7 +66,7 @@ const PianoPattern: React.FC<PianoPatternProps> = ({
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
     };
-  }, [dragging, slidable, pattern.length, keyWidth, patternWidth, backgroundWidth]);
+  }, [dragging, keyWidth, offsetX, onRootChange, patternWidth, backgroundWidth, slidable]);
 
   const handleOverlayMouseDown = (e: React.MouseEvent<SVGRectElement, MouseEvent>) => {
     if (!slidable) return;
