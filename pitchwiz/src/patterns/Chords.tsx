@@ -28,6 +28,18 @@ export const CHORDS_PATTERNS_ARRAY = [
   ["7+ / Dominant Augmented", "1", "3", "b6", "b7"],
   ["Δ / Delta (Major Seventh)", "1", "3", "5", "7"],
   ["-Δ / Minor Delta (Minor Major Seventh)", "1", "b3", "5", "7"],
+  //
+  //
   ["Δsus2 / Delta sus2", "1", "2", "5", "7"],
+  ["Δsus / Delta sus", "1", "4", "5", "7"],
+  ["Δb5 / Delta Flat 5", "1", "3", "b5", "7"],
+  ["Δ° / Delta Diminished", "1", "b3", "b5", "7"],
+  ["Δ+ / Delta Augmented", "1", "3", "b6", "7"],
+  ["-Δ+ / Minor Delta Augmented", "1", "b3", "b6", "7"],
+  //
+  //
+  ["9 / Dominant Ninth", "1", "3", "5", "b7", "9"],
+  ["-9 / Minor Ninth", "1", "b3", "5", "b7", "9"],
+  ["b9 / Flat Ninth", "1", "3", "5", "b7", "b9"],
 
 ];

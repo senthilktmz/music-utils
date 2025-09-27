@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
 import MiniKeyboard from "./MiniKeyboard";
+import MiniKeyboardExtensions from "./MiniKeyboardExtensions";
 import { CHORDS_PATTERNS_ARRAY } from "./patterns/Chords";
 import { MAIN_KEYBOARD_PATTERN } from "./patterns/MainKeyboard";
 
@@ -142,19 +143,35 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
     setIsDragging(true);
   };
 
+  // Map chord degrees to notes, placing 9/11/13 in the next octave and avoiding duplicate highlights
   const getPatternNotes = () => {
     if (!currentPattern) return [];
-    return currentPattern.pattern
-      .map((rect, i) => rect.type !== 'scale_interval_blank' ? i : null)
-      .filter((i): i is number => i !== null)
-      .map((i) => {
-        const idx = (rootIndex + i) % 12;
-        return ROOT_NOTES[idx];
-      });
+    const baseOctave = 4;
+    const nextOctave = baseOctave + 1;
+    const degreeToSemitone: Record<string, number> = {
+      "1": 0, "b2": 1, "2": 2, "#2": 3, "b3": 3, "3": 4, "4": 5, "#4": 6, "b5": 6, "5": 7, "#5": 8, "b6": 8, "6": 9, "bb7": 9, "b7": 10, "7": 11,
+      "b9": 1, "9": 2, "#9": 3, "11": 5, "#11": 6, "b13": 8, "13": 9
+    };
+    const notesWithDegrees = (CHORDS_PATTERNS_ARRAY.find(([name]) => name === selectedPattern) || []).slice(1) as string[];
+    const seenNotes = new Set<string>();
+    return notesWithDegrees.map((degree) => {
+      let semitone = degreeToSemitone[degree];
+      if (semitone === undefined) return null;
+      let noteIdx = (rootIndex + semitone) % 12;
+      let note = ROOT_NOTES[noteIdx];
+      let octave = baseOctave;
+      // If degree is 9, 11, 13 or their alterations, use next octave
+      if (["b9", "9", "#9", "11", "#11", "b13", "13"].includes(degree)) {
+        octave = nextOctave;
+      }
+      const noteWithOctave = note + octave;
+      if (!seenNotes.has(noteWithOctave)) {
+        seenNotes.add(noteWithOctave);
+        return noteWithOctave;
+      }
+      return null;
+    }).filter((n): n is string => n !== null);
   };
-
-  // Only pass sliderOffsetX to the slider when not dragging
-  const sliderOffsetProp = isDragging ? undefined : sliderOffsetX;
 
   // Add chord to scratch pad, including the sequence of notes (as frequencies)
   const handleAddToScratchPad = () => {
@@ -164,7 +181,7 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
       'F#': 739.99, 'G': 783.99, 'G#': 830.61, 'A': 880.00, 'A#': 932.33, 'B': 987.77,
     };
     const notes = getPatternNotes();
-    const noteFrequencies = notes.map(n => NOTE_FREQS[n] || 523.25);
+    const noteFrequencies = notes.map(n => NOTE_FREQS[n.slice(0, -1)] || 523.25);
     const chordInfo = {
       root: ROOT_NOTES[rootIndex],
       type: currentPattern.name,
@@ -227,12 +244,21 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <MiniKeyboard
-            notes={getPatternNotes()}
-            root={ROOT_NOTES[rootIndex]}
-            width={MINI_KEY_WIDTH}
-            height={MINI_KEY_HEIGHT}
-          />
+          {getPatternNotes().some(n => /\d/.test(n) && !n.endsWith('4')) ? (
+            <MiniKeyboardExtensions
+              notes={getPatternNotes()}
+              root={ROOT_NOTES[rootIndex]}
+              width={MINI_KEY_WIDTH}
+              height={MINI_KEY_HEIGHT}
+            />
+          ) : (
+            <MiniKeyboard
+              notes={getPatternNotes().map(n => n.replace(/\d+$/, ""))}
+              root={ROOT_NOTES[rootIndex]}
+              width={MINI_KEY_WIDTH}
+              height={MINI_KEY_HEIGHT}
+            />
+          )}
           <button
             onClick={handleAddToScratchPad}
             title="Add chord to Scratch Pad"
@@ -278,7 +304,7 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
             totalKeys={KEYBOARD_LENGTH}
             slidable={true}
             onRootChange={handleSliderChange}
-            offsetX={sliderOffsetProp}
+            offsetX={sliderOffsetX}
           />
         </>
       )}
