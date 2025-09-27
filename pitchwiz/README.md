@@ -1,46 +1,26 @@
-# Getting Started with Create React App
+# Interval Table from C (up to 13th)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+| Degree (flats) | Degree (sharps) | Offset | Note (from C) | Interval Name |
+|----------------|-----------------|--------|---------------|---------------|
+| 1              | 1               | 0      | C             | Root (1) |
+| 2♭             | 1♯              | 1      | C♯ / D♭       | Minor 2nd (♭2) |
+| 2              | 2               | 2      | D             | Major 2nd (2) |
+| 3♭             | 2♯              | 3      | D♯ / E♭       | Minor 3rd (♭3) / Augmented 2nd (♯2) |
+| 3              | 3               | 4      | E             | Major 3rd (3) |
+| 4              | 4               | 5      | F             | Perfect 4th (4) |
+| 5♭             | 4♯              | 6      | F♯ / G♭       | Diminished 5th (♭5) / Augmented 4th (♯4) |
+| 5              | 5               | 7      | G             | Perfect 5th (5) |
+| 6♭             | 5♯              | 8      | G♯ / A♭       | Minor 6th (♭6) / Augmented 5th (♯5) |
+| 6              | 6               | 9      | A             | Major 6th (6) |
+| 7♭             | 6♯              | 10     | A♯ / B♭       | Minor 7th (♭7) |
+| 7              | 7               | 11     | B             | Major 7th (7) |
+| 8              | 8               | 12     | C             | Octave (8ve) |
+| 9♭             | 8♯              | 13     | C♯ / D♭       | Minor 9th (♭9) |
+| 9              | 9               | 14     | D             | Major 9th (9) |
+| 10♭            | 9♯              | 15     | D♯ / E♭       | Augmented 9th (♯9) / Minor 10th |
+| 10             | 10              | 16     | E             | Major 10th (M3 an octave higher) |
+| 11             | 11              | 17     | F             | Perfect 11th (11) |
+| 12♭            | 11♯             | 18     | F♯ / G♭       | Augmented 11th (♯11) |
+| 12             | 12              | 19     | G             | Perfect 12th (P5 an octave higher) |
+| 13♭            | 12♯             | 20     | G♯ / A♭       | Minor 13th (♭13) |
+| 13             | 13              | 21     | A             | Major 13th (13) |
