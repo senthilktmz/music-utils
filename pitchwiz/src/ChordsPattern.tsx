@@ -342,9 +342,19 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
           <div style={{ fontWeight: 'bold', fontSize: 18 }}>
             Root key: {ROOT_NOTES[rootIndex]}
           </div>
-          <div style={{ margin: '8px 0', fontSize: 16 }}>
-            Notes: {getPatternNotes().join(' - ')}
-          </div>
+          {keyboardViewJson && (() => {
+            try {
+              const kv = JSON.parse(keyboardViewJson);
+              const displayNotes = kv.key_sequence.filter((n: string) => !n.startsWith('0')).join(' - ');
+              return (
+                <div style={{ fontSize: 16 }}>
+                  Notes: {displayNotes}
+                </div>
+              );
+            } catch {
+              return null;
+            }
+          })()}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {keyboardViewJson && (() => {
