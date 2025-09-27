@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import IntervalPattern from "./IntervalPattern";
 import PianoKeyboard from "./PianoKeyboard";
 import MiniKeyboardExtensions from "./MiniKeyboardExtensions";
@@ -150,16 +150,27 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
     }
   };
 
+  // Only call alignSliderToRoot when rootIndex changes, not on every render or pattern change
+  useEffect(() => {
+    alignSliderToRoot(rootIndex);
+    // eslint-disable-next-line
+  }, [rootIndex]);
+
   // When a root button is clicked
   const handleRootButtonClick = (idx: number) => {
     setRootIndex(idx);
-    alignSliderToRoot(idx);
     setIsDragging(false);
   };
 
-  // When the slider is dragged, update only rootIndex and set isDragging true
+  // Clamp slider movement to the first octave B key of the main keyboard
   const handleSliderChange = (newRootIdx: number) => {
-    setRootIndex(newRootIdx % 12);
+    // Find the index of the first B key in MAIN_KEYBOARD_PATTERN
+    const bKeyIndex = MAIN_KEYBOARD_PATTERN.findIndex(k => k.label === "B");
+    if (newRootIdx > bKeyIndex) {
+      setRootIndex(bKeyIndex);
+    } else {
+      setRootIndex(newRootIdx % 12);
+    }
     setIsDragging(true);
   };
 
@@ -297,6 +308,32 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
     }
   };
 
+  // PATCH: Dynamically generate pattern for slider to cover all degrees (including 9, 11, 13)
+  const sliderPattern = (() => {
+    const degreeToSemitone: Record<string, number> = {
+      "1": 0, "b2": 1, "2": 2, "#2": 3, "b3": 3, "3": 4, "4": 5, "#4": 6, "b5": 6, "5": 7, "#5": 8, "b6": 8, "6": 9, "bb7": 9, "b7": 10, "7": 11,
+      "b9": 13, "9": 14, "#9": 15, "11": 17, "#11": 18, "b13": 20, "13": 21
+    };
+    const degrees = currentPattern ? (CHORDS_PATTERNS_ARRAY.find(([name]) => name === selectedPattern) || []).slice(1) as string[] : [];
+    const maxSemitone = Math.max(...degrees.map(d => degreeToSemitone[d]));
+    const pattern = [];
+    for (let i = 0; i <= maxSemitone; i++) {
+      const degree = Object.keys(degreeToSemitone).find(key => degreeToSemitone[key] === i);
+      if (degree && degrees.includes(degree)) {
+        pattern.push({
+          label: degree,
+          color: "lightblue",
+          type: "scale_interval_member",
+          fontColor: degree === "1" ? "darkgreen" : undefined,
+          fontType: degree === "1" ? "bold" : undefined
+        });
+      } else {
+        pattern.push({ label: "", color: "white", type: "scale_interval_blank" });
+      }
+    }
+    return pattern;
+  })();
+
   return (
     <div>
       {/* Root key selector row and chord selection dropdown on same line */}
@@ -412,7 +449,7 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
             Tip: Drag or slide the pattern bar below to left or right to explore different chord positions.
           </div>
           <IntervalPattern
-            pattern={currentPattern.pattern}
+            pattern={sliderPattern}
             keyWidth={KEY_WIDTH}
             keyHeight={KEY_HEIGHT}
             keyboardWidth={KEY_WIDTH * KEYBOARD_LENGTH}
