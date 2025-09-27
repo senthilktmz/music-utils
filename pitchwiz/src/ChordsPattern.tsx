@@ -29,6 +29,24 @@ const INTERVAL_SEQUENCE = [
   "7"   // 11
 ];
 
+// Helper: get all notes from start to end (inclusive)
+const NOTE_SEQUENCE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const EXT_DEGREES = new Set(["b9", "9", "#9", "11", "#11", "b13", "13"]);
+function getNoteRangeInclusive(start: string, end: string) {
+  const notes = [];
+  let [startNote, startOct] = [start.slice(0, -1), parseInt(start.slice(-1))];
+  let [endNote, endOct] = [end.slice(0, -1), parseInt(end.slice(-1))];
+  let idx = NOTE_SEQUENCE.indexOf(startNote);
+  let oct = startOct;
+  while (!(oct > endOct || (oct === endOct && idx > NOTE_SEQUENCE.indexOf(endNote)))) {
+    notes.push(NOTE_SEQUENCE[idx] + oct);
+    if (NOTE_SEQUENCE[idx] + oct === end) break;
+    idx++;
+    if (idx === 12) { idx = 0; oct++; }
+  }
+  return notes;
+}
+
 // Generate chord patterns at runtime
 function generateChordPattern([name, ...intervals]: string[]) {
   // Find the highest interval index in the canonical sequence
@@ -198,7 +216,6 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
 
   // Helper to get all notes between two note strings (e.g., G3 to B3)
   function getNoteRange(start: string, end: string) {
-    const NOTE_SEQUENCE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     const notes = [];
     let [startNote, startOct] = [start.slice(0, -1), parseInt(start.slice(-1))];
     let [endNote, endOct] = [end.slice(0, -1), parseInt(end.slice(-1))];
@@ -227,49 +244,42 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
       setIntervalSequenceJson(JSON.stringify(intervalObj, null, 2));
 
       // --- KeyboardView ---
-      // Map degree_sequence to key_sequence (e.g., C4, E4, G4)
+      // Map degree_sequence to actual chord notes (e.g., E4, G#4, B4, D5, F#5 for E9)
       const degreeToSemitone: Record<string, number> = {
         "1": 0, "b2": 1, "2": 2, "#2": 3, "b3": 3, "3": 4, "4": 5, "#4": 6, "b5": 6, "5": 7, "#5": 8, "b6": 8, "6": 9, "bb7": 9, "b7": 10, "7": 11,
-        "b9": 1, "9": 2, "#9": 3, "11": 5, "#11": 6, "b13": 8, "13": 9
+        "b9": 1+12, "9": 2+12, "#9": 3+12, "11": 5+12, "#11": 6+12, "b13": 8+12, "13": 9+12
       };
       const rootIdx = ROOT_NOTES.indexOf(intervalObj.ROOT_KEY);
-      // First, get the set of actual chord notes (e.g., ["C4", "E4", "G4"])
-      const chordNotesSet = new Set(
-        intervalObj.degree_sequence.map((deg: string) => {
-          let semitone = degreeToSemitone[deg];
-          if (semitone === undefined) return null;
-          let noteIdx = (rootIdx + semitone) % 12;
-          let note = ROOT_NOTES[noteIdx];
-          let octave = 4;
-          if (["b9", "9", "#9", "11", "#11", "b13", "13"].includes(deg)) octave = 5;
-          return note + octave;
-        }).filter((n): n is string => n !== null)
+      // Get actual chord notes (e.g., E4, G#4, B4, D5, F#5 for E9)
+      const chordNotes = intervalObj.degree_sequence.map((deg: string) => {
+        let semitone = degreeToSemitone[deg];
+        if (semitone === undefined) return null;
+        // For extensions, add 12 to semitone (already handled above)
+        let noteIdx = (rootIdx + semitone) % 12;
+        let note = ROOT_NOTES[noteIdx];
+        let octave = 4 + Math.floor((rootIdx + semitone) / 12);
+        return note + octave;
+      }).filter((n): n is string => n !== null);
+      // Sort chordNotes by musical order (root, 3, 5, 7, 9, 11, 13)
+      const sortedChordNotes = [...chordNotes].sort((a, b) => {
+        const getIdx = (n: string) => {
+          const o = parseInt(n.slice(-1));
+          const i = NOTE_SEQUENCE.indexOf(n.slice(0, -1));
+          return o * 12 + i;
+        };
+        return getIdx(a) - getIdx(b);
+      });
+      const firstChordNote = sortedChordNotes[0];
+      const lastChordNote = sortedChordNotes[sortedChordNotes.length - 1];
+      const key_sequence = getNoteRangeInclusive(firstChordNote, lastChordNote).map(n =>
+        chordNotes.includes(n) ? n : "0" + n
       );
-      // Now build key_sequence from C4 to G4
-      const NOTE_SEQUENCE = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-      let key_sequence: string[] = [];
-      let startIdx = NOTE_SEQUENCE.indexOf("C");
-      let endIdx = NOTE_SEQUENCE.indexOf("G");
-      let oct = 4;
-      for (let idx = startIdx; !(oct > 4 && idx > endIdx); idx++) {
-        if (idx === 12) { idx = 0; oct++; }
-        const note = NOTE_SEQUENCE[idx] + oct;
-        if (chordNotesSet.has(note)) {
-          key_sequence.push(note);
-        } else {
-          key_sequence.push("0" + note);
-        }
-        if (oct === 4 && idx === endIdx) break;
-      }
-      // Calculate backward_padding (up to but not including first key_sequence note)
-      const firstSeqNote = key_sequence.find(k => !k.startsWith('0')) || key_sequence[0];
-      const backward_padding = getNoteRange("G3", firstSeqNote.slice(0, -1) + firstSeqNote.slice(-1));
-      if (backward_padding[backward_padding.length - 1] === firstSeqNote) backward_padding.pop();
-      // Calculate forward_padding (after last key_sequence note, up to and including show_forward_padding)
-      const lastSeqNote = [...key_sequence].reverse().find(k => !k.startsWith('0')) || key_sequence[key_sequence.length - 1];
-      // Find the next note after lastSeqNote
-      let note2 = lastSeqNote.slice(0, -1);
-      let oct2 = parseInt(lastSeqNote.slice(-1));
+      // Calculate backward_padding (up to but not including firstChordNote)
+      const backward_padding = getNoteRange("G3", firstChordNote);
+      if (backward_padding[backward_padding.length - 1] === firstChordNote) backward_padding.pop();
+      // Calculate forward_padding (after lastChordNote, up to and including show_forward_padding)
+      let note2 = lastChordNote.slice(0, -1);
+      let oct2 = parseInt(lastChordNote.slice(-1));
       let idx2 = NOTE_SEQUENCE.indexOf(note2);
       idx2 = (idx2 + 1) % 12;
       if (idx2 === 0) oct2++;
@@ -382,6 +392,9 @@ const ChordsPattern: React.FC<ChordsPatternProps> = ({ zoom = 100, addScratchPad
           </button>
         </div>
       </div>
+      {keyboardViewJson && (
+        <pre style={{ background: '#f4f4f4', color: '#222', fontSize: 13, padding: 12, borderRadius: 8, margin: '16px 0', maxWidth: 600, overflowX: 'auto' }}>{keyboardViewJson}</pre>
+      )}
       {currentPattern && (
         <>
           <div style={{ height: 32 }} />

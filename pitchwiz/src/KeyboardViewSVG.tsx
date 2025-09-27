@@ -44,7 +44,10 @@ function getBlackKeysForWhiteKeys(whiteKeys: string[]) {
     const nextIdx = (idx + 1) % 12;
     const nextBase = NOTE_SEQUENCE[nextIdx];
     if (BLACK_KEYS.has(nextBase)) {
-      const note = nextBase + currOct + (nextIdx === 0 ? 1 : 0);
+      // Black key is between curr and next
+      // The octave for the black key is the same as curr unless nextBase is 'C', then it's next octave
+      const blackOct = (nextBase === 'C') ? currOct + 1 : currOct;
+      const note = nextBase + blackOct;
       blackKeys.push({ note, x: i });
     }
   }
@@ -66,27 +69,31 @@ const KeyboardViewSVG: React.FC<KeyboardViewSVGProps> = ({ backwardPadding, keyS
   const width = WHITE_KEY_WIDTH * whiteKeys.length;
   const height = WHITE_KEY_HEIGHT;
 
-  // Find which keys to highlight red (main notes in key_sequence, not starting with '0')
-  const mainNotes = new Set(keySequence.filter(k => !k.startsWith('0')).map(k => k.replace(/^0/, '')));
+  // Find which keys to highlight red (main notes in keySequence, not starting with '0')
+  const mainNotes = new Set(keySequence.filter(k => !k.startsWith('0')));
 
   return (
     <svg width={width} height={height} style={{ background: '#f9f7e6', borderRadius: 0, boxShadow: '0 2px 8px #0002', display: 'block' }}>
-      {/* White keys with shadow and rounded corners */}
-      {whiteKeys.map((note, i) => (
-        <g key={note}>
-          <rect
-            x={i * WHITE_KEY_WIDTH}
-            y={0}
-            width={WHITE_KEY_WIDTH}
-            height={WHITE_KEY_HEIGHT}
-            fill={mainNotes.has(note) ? '#d44' : '#fff'}
-            stroke="#222"
-            rx={0}
-            ry={0}
-            style={{ filter: 'drop-shadow(0 2px 2px #0001)' }}
-          />
-        </g>
-      ))}
+      {/* White keys with shadow and rectangular corners */}
+      {whiteKeys.map((note, i) => {
+        // Note: keySequence may have 0-prefixed notes, so compare with and without prefix
+        const isRed = mainNotes.has(note);
+        return (
+          <g key={note}>
+            <rect
+              x={i * WHITE_KEY_WIDTH}
+              y={0}
+              width={WHITE_KEY_WIDTH}
+              height={WHITE_KEY_HEIGHT}
+              fill={isRed ? '#d44' : '#fff'}
+              stroke="#222"
+              rx={0}
+              ry={0}
+              style={{ filter: 'drop-shadow(0 2px 2px #0001)' }}
+            />
+          </g>
+        );
+      })}
       {/* Black keys (shorter, layered above white) */}
       {blackKeys.map(({ note, x }, i) => {
         const isRed = mainNotes.has(note);
