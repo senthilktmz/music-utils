@@ -1,0 +1,81 @@
+.intervals-container {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 1rem;
+  max-width: 100vw;
+  overflow-x: auto;
+}
+
+.intervals-table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+
+.intervals-table th, .intervals-table td {
+  border: 1px solid #bbb;
+  padding: 0.5em 1em;
+  text-align: center;
+}
+
+.intervals-table th {
+  background: #f7f7f7;
+  font-weight: bold;
+}
+
+.intervals-table tr.unison {
+  background: #d8f3f8;
+}
+.intervals-table tr.minor {
+  background: #ffe1b2;
+}
+.intervals-table tr.major {
+  background: #e2f7d3;
+}
+.intervals-table tr.perfect {
+  background: #e1daf7;
+}
+.intervals-table tr.diminished {
+  background: #d3d3d3;
+}
+
+.intervals-table td {
+  color: #222;
+}
+.intervals-table td b {
+  color: #222;
+}
+.intervals-table td[style*='#bbb'] {
+  color: #bbb !important;
+}
+
+.intervals-legend {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  font-size: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.legend-btn {
+  border: none;
+  outline: none;
+  padding: 0.3em 1em;
+  border-radius: 0.5em;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: box-shadow 0.2s, opacity 0.2s;
+  margin: 0 0.2em;
+}
+.legend-btn.active {
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 2px solid #333;
+}
+.legend-btn.unison { background: #d8f3f8; }
+.legend-btn.minor { background: #ffe1b2; }
+.legend-btn.major { background: #e2f7d3; }
+.legend-btn.perfect { background: #e1daf7; }
+.legend-btn.diminished { background: #d3d3d3; }
